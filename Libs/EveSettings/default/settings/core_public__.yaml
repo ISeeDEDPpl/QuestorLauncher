@@ -1,0 +1,41 @@
+audio:
+  audioEnabled: [130300046869002242, 0]
+  eveampGain: [130130408471341408, 0.25]
+  evevoiceGain: [130130408471341408, 0.9]
+  masterVolume: [130130408471341408, 0.4]
+  suppressTurret: [130294647296338176, 0]
+  uiGain: [130130408471341408, 0.4]
+  worldVolume: [130130408471341408, 0.4]
+device:
+  DeviceSettings:
+  - 130300046869082101
+  - {Adapter: 0, AutoDepthStencilFormat: 1, BackBufferCount: 1, BackBufferFormat: 88,
+    BackBufferHeight: 649, BackBufferWidth: 1003, EnableAutoDepthStencil: true, Flags: 0,
+    FullScreen_RefreshRateInHz: 0, MultiSampleQuality: 0, MultiSampleType: 0, PresentationInterval: 17,
+    SwapEffect: 0, Windowed: true}
+  FixedWindow: [130300046869082101, false]
+  FullScreenResolution: [130300046868158134, null]
+  UIScaleFullscreen: [130300046868158134, 1.0]
+  UIScaleWindowed: [130300046874329583, 1.0]
+  WindowedResolution:
+  - 130300046868158134
+  - [1024, 768]
+  antiAliasing: [130300047235144012, 0]
+  charClothSimulation: [130300046868158134, 0]
+  charTextureQuality: [130300046868158134, 2]
+  fastCharacterCreation: [130300046868158134, 0]
+  hdrEnabled: [130300047235144012, 0]
+  interiorGraphicsQuality: [130300047235144012, 0]
+  interiorShaderQuality: [130300047235144012, 0]
+  loadstationenv2: [130300046873660020, 0]
+  lodQuality: [130300047235144012, 1]
+  postProcessingQuality: [130300047235144012, 0]
+  resourceCacheEnabled: [130300046869082101, 0]
+  shaderQuality: [130300047235144012, 1]
+  shadowQuality: [130300047235144012, 0]
+  sunOcclusion: [130132759775142610, 0]
+  textureQuality: [130300047235144012, 2]
+generic:
+  eulaCRC: [130300046885701617, -2089643990]
+  showintro2: [130300047201172314, 0]
+ui: {}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ArrayOfEveAccount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <EveAccount>
+    <AccountName>exampleUser</AccountName>
+    <CharacterName>exampleChar</CharacterName>
+    <Password>examplePw</Password>
+    <StartHour>8</StartHour>
+    <HoursPerDay>12</HoursPerDay>
+    <Begin>8:32</Begin>
+    <End>23:43</End>
+    <StartsPast24H>0</StartsPast24H>
+    <LastStartTime>0001-01-01T00:00:00</LastStartTime>
+    <IsActive>true</IsActive>
+    <UseRedGuard>true</UseRedGuard>
+    <HideHookManager>false</HideHookManager>
+    <Pid>0</Pid>
+  </EveAccount>
+</ArrayOfEveAccount>
