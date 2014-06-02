@@ -72,6 +72,7 @@
     <Compile Include="Win32Hooks\MiniWriteDumpController.cs" />
     <Compile Include="Win32Hooks\SHGetFolderPathAController.cs" />
     <Compile Include="Win32Hooks\SHGetFolderPathWController.cs" />
+    <Compile Include="Win32Hooks\Stealthtest.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">

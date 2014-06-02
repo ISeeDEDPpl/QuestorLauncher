@@ -1,9 +1,9 @@
 ﻿/*
-* created by duketwo
-* Date: 31.05.2014
-* Time: 13:21
-* 
-*/
+ * created by duketwo
+ * Date: 31.05.2014
+ * Time: 13:21
+ * 
+ */
 
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Injector
 		}
 		
 		
-		public void DownloadQuestor(){
+		public void DownloadQuestor() {
 			string qLink = "https://github.com/ISeeDEDPpl/Questor/archive/BleedingEdge.zip";
 			
 			Cache.Instance.Log("Downloading Questor from: " + qLink);
@@ -59,11 +59,16 @@ namespace Injector
 				Directory.Delete(questorSourcePath + "Questor-BleedingEdge",true);
 			ZipFile.ExtractToDirectory(qZipFile,  questorSourcePath);
 			
+			if(File.Exists(Cache.Instance.AssemblyPath + "\\DirectEve\\DirectEve.dll")) {
+				Cache.Instance.Log("DirectEve.dll found, copying");
+				File.Copy(Cache.Instance.AssemblyPath + "\\DirectEve\\DirectEve.dll",questorSourcePath + "Questor-BleedingEdge\\DirectEve\\DirectEve.dll",true);
+			}
+			
 			Cache.Instance.Log("Done Extracting Questor from: " + qZipFile);
 		}
 		
 		public void CompileQuestor(){
-		
+			
 			Cache.Instance.Log("Compiling Questor.");
 			string questorSourcePathBE = Cache.Instance.AssemblyPath + "\\QuestorSource\\Questor-BleedingEdge\\";
 			
@@ -78,11 +83,11 @@ namespace Injector
 			while(!compileProcess.HasExited){
 				Thread.Sleep(10);
 			}
-			Cache.Instance.Log("Done Compiling Questor.");		
+			Cache.Instance.Log("Done Compiling Questor.");
 		}
 		
 		public void CopyQuestorBinary(){
-		
+			
 			Cache.Instance.Log("Copying Questor.");
 			string questorSourcePath = Cache.Instance.AssemblyPath + "\\QuestorSource\\Questor-BleedingEdge\\output";
 			string questorDestinationPath = Cache.Instance.AssemblyPath + "\\Questor\\";
@@ -104,14 +109,19 @@ namespace Injector
 				else {
 					
 					if(!File.Exists(newPath.Replace(questorSourcePath, questorDestinationPath)))
-						File.Copy(newPath, newPath.Replace(questorSourcePath, questorDestinationPath), false);	
+						File.Copy(newPath, newPath.Replace(questorSourcePath, questorDestinationPath), false);
 					
 				}
-					
+				
 			}
 			
 			foreach(String f in Directory.GetFiles(Cache.Instance.AssemblyPath + "\\QuestorSource\\Questor-BleedingEdge\\DirectEve")) {
 				File.Copy(f,f.Replace(Cache.Instance.AssemblyPath + "\\QuestorSource\\Questor-BleedingEdge\\DirectEve", questorDestinationPath),true);
+			}
+			
+			if(File.Exists(Cache.Instance.AssemblyPath + "\\DirectEve\\DirectEve.lic")) {
+				Cache.Instance.Log("DirectEve.lic found, copying");
+				File.Copy(Cache.Instance.AssemblyPath + "\\DirectEve\\DirectEve.lic", questorDestinationPath + "DirectEve.lic",true);
 			}
 			
 			Cache.Instance.Log("Done Copying Questor.");

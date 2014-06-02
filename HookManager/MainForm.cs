@@ -323,6 +323,9 @@ namespace HookManager
 				this.Hide();
 		}
 		
-		
+		void Button5Click(object sender, EventArgs e)
+		{
+			Win32Hooks.Stealthtest.Test();
+		}	
 	}
 }
