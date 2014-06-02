@@ -108,15 +108,15 @@ namespace Injector
 			// contextMenuStrip1
 			// 
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.deleteToolStripMenuItem,
-			this.startInjectToolStripMenuItem});
+									this.deleteToolStripMenuItem,
+									this.startInjectToolStripMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
 			this.contextMenuStrip1.Size = new System.Drawing.Size(105, 48);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.deleteToolStripMenuItem1});
+									this.deleteToolStripMenuItem1});
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
 			this.deleteToolStripMenuItem.Text = "delete";
@@ -158,7 +158,7 @@ namespace Injector
 			this.buttonGenNewBeginEnd.Name = "buttonGenNewBeginEnd";
 			this.buttonGenNewBeginEnd.Size = new System.Drawing.Size(178, 24);
 			this.buttonGenNewBeginEnd.TabIndex = 27;
-			this.buttonGenNewBeginEnd.Text = "generate new begin/end times";
+			this.buttonGenNewBeginEnd.Text = "Generate new begin/end times";
 			this.buttonGenNewBeginEnd.UseVisualStyleBackColor = true;
 			this.buttonGenNewBeginEnd.Click += new System.EventHandler(this.ButtonGenNewBeginEndClick);
 			// 
@@ -168,7 +168,7 @@ namespace Injector
 			this.buttonKillAllEveInstances.Name = "buttonKillAllEveInstances";
 			this.buttonKillAllEveInstances.Size = new System.Drawing.Size(178, 24);
 			this.buttonKillAllEveInstances.TabIndex = 26;
-			this.buttonKillAllEveInstances.Text = "kill all eve instances";
+			this.buttonKillAllEveInstances.Text = "Kill all eve instances";
 			this.buttonKillAllEveInstances.UseVisualStyleBackColor = true;
 			this.buttonKillAllEveInstances.Click += new System.EventHandler(this.ButtonKillAllEveInstancesClick);
 			// 
@@ -178,7 +178,7 @@ namespace Injector
 			this.buttonStopEveManger.Name = "buttonStopEveManger";
 			this.buttonStopEveManger.Size = new System.Drawing.Size(86, 21);
 			this.buttonStopEveManger.TabIndex = 23;
-			this.buttonStopEveManger.Text = "stop";
+			this.buttonStopEveManger.Text = "Stop";
 			this.buttonStopEveManger.UseVisualStyleBackColor = true;
 			this.buttonStopEveManger.Click += new System.EventHandler(this.ButtonStopEveMangerClick);
 			// 
@@ -188,7 +188,7 @@ namespace Injector
 			this.buttonStartEveManger.Name = "buttonStartEveManger";
 			this.buttonStartEveManger.Size = new System.Drawing.Size(86, 21);
 			this.buttonStartEveManger.TabIndex = 22;
-			this.buttonStartEveManger.Text = "start";
+			this.buttonStartEveManger.Text = "Start";
 			this.buttonStartEveManger.UseVisualStyleBackColor = true;
 			this.buttonStartEveManger.Click += new System.EventHandler(this.ButtonStartEveMangerClick);
 			// 

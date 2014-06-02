@@ -97,7 +97,6 @@
     <Compile Include="RedGuard.cs" />
     <Compile Include="EveManager.cs" />
     <Compile Include="UserPassGen.cs" />
-    <Compile Include="WCFServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
