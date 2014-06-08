@@ -1,11 +1,11 @@
 ﻿/*
- * ---------------------------------------
- * User: duketwo
- * Date: 23.03.2014
- * Time: 18:09
- * 
- * ---------------------------------------
- */
+* ---------------------------------------
+* User: duketwo
+* Date: 23.03.2014
+* Time: 18:09
+* 
+* ---------------------------------------
+*/
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,7 +41,7 @@ namespace Injector
 		
 		[DllImport("user32.dll", CharSet=CharSet.Unicode)]
 		static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
-
+		
 		[DllImport("user32.dll")]
 		public static extern int SendMessage(int hWnd, uint Msg, int wParam, StringBuilder lParam);
 		
@@ -85,6 +85,8 @@ namespace Injector
 		public bool DoRedguard(string accountName)
 		{
 			
+			using (CrossProcessLockFactory.CreateCrossProcessLock(-1,"redguard"))
+			{
 				
 				int hwndRedGuard=0;
 				IntPtr hwndListBox=(IntPtr)0;
@@ -130,6 +132,8 @@ namespace Injector
 				SendMessage((int)hwndOKButton, WM_LBUTTONUP, 0, null);
 				
 				return true;
+				
+			}
 				
 			
 		}
