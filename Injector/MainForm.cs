@@ -1,11 +1,11 @@
 ﻿/*
-* Created by SharpDevelop.
-* User: dserver
-* Date: 02.12.2013
-* Time: 09:09
-* 
-* To change this template use Tools | Options | Coding | Edit Standard Headers.
-*/
+ * Created by SharpDevelop.
+ * User: dserver
+ * Date: 02.12.2013
+ * Time: 09:09
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -128,7 +128,7 @@ namespace Injector
 		{
 			EveManager.Instance.Dispose();
 		}
-				
+		
 		
 		
 		void ButtonKillAllEveInstancesClick(object sender, EventArgs e)
@@ -157,6 +157,25 @@ namespace Injector
 		{
 			Questor.Instance.CompileQuestor();
 			Questor.Instance.CopyQuestorBinary();
+		}
+		
+		void MainFormResize(object sender, EventArgs e)
+		{
+			if ( WindowState == FormWindowState.Minimized )
+			{
+				this.Visible = false;
+				this.notifyIconQL.Visible = true;
+			}
+			
+		}
+		
+		void NotifyIconQLMouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			
+			((NotifyIcon)sender).Visible = !((NotifyIcon)sender).Visible;
+			this.Visible = !this.Visible;
+			WindowState = FormWindowState.Normal;
+			
 		}
 	}
 }

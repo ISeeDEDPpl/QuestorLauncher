@@ -56,6 +56,7 @@ namespace Injector
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.buttonCompileCopy = new System.Windows.Forms.Button();
 			this.buttonQuestorDownloadExtract = new System.Windows.Forms.Button();
+			this.notifyIconQL = new System.Windows.Forms.NotifyIcon(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridEveAccounts)).BeginInit();
 			this.contextMenuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -109,15 +110,15 @@ namespace Injector
 			// contextMenuStrip1
 			// 
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.deleteToolStripMenuItem,
-			this.startInjectToolStripMenuItem});
+									this.deleteToolStripMenuItem,
+									this.startInjectToolStripMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
 			this.contextMenuStrip1.Size = new System.Drawing.Size(105, 48);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.deleteToolStripMenuItem1});
+									this.deleteToolStripMenuItem1});
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
 			this.deleteToolStripMenuItem.Text = "delete";
@@ -232,6 +233,12 @@ namespace Injector
 			this.buttonQuestorDownloadExtract.UseVisualStyleBackColor = true;
 			this.buttonQuestorDownloadExtract.Click += new System.EventHandler(this.ButtonQuestorDownloadExtractClick);
 			// 
+			// notifyIconQL
+			// 
+			this.notifyIconQL.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconQL.Icon")));
+			this.notifyIconQL.Text = "notifyIcon1";
+			this.notifyIconQL.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconQLMouseDoubleClick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -247,6 +254,7 @@ namespace Injector
 			this.Text = "QuestorLauncher";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFormFormClosed);
 			this.Load += new System.EventHandler(this.MainFormLoad);
+			this.Resize += new System.EventHandler(this.MainFormResize);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridEveAccounts)).EndInit();
 			this.contextMenuStrip1.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
@@ -254,6 +262,7 @@ namespace Injector
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.NotifyIcon notifyIconQL;
 		
 		
 		
