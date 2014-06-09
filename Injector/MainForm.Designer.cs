@@ -37,6 +37,7 @@ namespace Injector
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.logLabel = new System.Windows.Forms.Label();
 			this.logbox = new System.Windows.Forms.ListBox();
 			this.exeFileLocationLabel = new System.Windows.Forms.Label();
@@ -108,15 +109,15 @@ namespace Injector
 			// contextMenuStrip1
 			// 
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-									this.deleteToolStripMenuItem,
-									this.startInjectToolStripMenuItem});
+			this.deleteToolStripMenuItem,
+			this.startInjectToolStripMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
 			this.contextMenuStrip1.Size = new System.Drawing.Size(105, 48);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-									this.deleteToolStripMenuItem1});
+			this.deleteToolStripMenuItem1});
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
 			this.deleteToolStripMenuItem.Text = "delete";
@@ -241,6 +242,7 @@ namespace Injector
 			this.Controls.Add(this.logbox);
 			this.Controls.Add(this.logLabel);
 			this.Controls.Add(this.groupBox1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MainForm";
 			this.Text = "QuestorLauncher";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFormFormClosed);
