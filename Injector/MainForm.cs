@@ -75,7 +75,11 @@ namespace Injector
 		{
 			dataGridEveAccounts.DataSource = Cache.Instance.EveAccountSerializeableSortableBindingList.List;
 			textBoxEveLocation.Text = Cache.Instance.EveSettings.EveDirectory;
-			EveServerStatus.Instance.StartEveServerStatusThread();
+			
+			checkBoxEveServerStatusThread.Checked = Cache.Instance.EveSettings.EveServerStatusThread;
+			if(Cache.Instance.EveSettings.EveServerStatusThread) {
+				EveServerStatus.Instance.StartEveServerStatusThread();
+			}
 			
 		}
 		
@@ -176,6 +180,17 @@ namespace Injector
 			this.Visible = !this.Visible;
 			WindowState = FormWindowState.Normal;
 			
+		}
+		
+		void CheckBoxEveServerStatusThreadCheckedChanged(object sender, EventArgs e)
+		{
+			Cache.Instance.EveSettings.EveServerStatusThread = ((CheckBox)sender).Checked;
+			
+			if(((CheckBox)sender).Checked) {
+				EveServerStatus.Instance.StartEveServerStatusThread();
+			} else {
+				EveServerStatus.Instance.Dispose();
+			}
 		}
 	}
 }

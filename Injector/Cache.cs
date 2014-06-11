@@ -52,7 +52,7 @@ namespace Injector
 		public EveSetting EveSettings { 
 			get {
 				if(!eveSettingsSerializeableSortableBindingList.List.Any())
-					eveSettingsSerializeableSortableBindingList.List.Add(new EveSetting("C:\\eveoffline\\bin\\exefile.exe", "C:\\redugard\\", DateTime.MinValue));
+					eveSettingsSerializeableSortableBindingList.List.Add(new EveSetting("C:\\eveoffline\\bin\\exefile.exe", "C:\\redugard\\", DateTime.MinValue, true));
 				return (EveSetting)eveSettingsSerializeableSortableBindingList.List[0];
 			}
 		}

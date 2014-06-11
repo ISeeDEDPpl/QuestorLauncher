@@ -26,11 +26,12 @@ namespace Injector
 	public class EveSetting : ViewModelBase {
 		
 
-		public EveSetting(string eveDirectory, string redGuardDirectory ,DateTime last24HourTS)
+		public EveSetting(string eveDirectory, string redGuardDirectory ,DateTime last24HourTS, bool eveServerStatusThread)
 		{
 			EveDirectory = eveDirectory;
 			RedGuardDirectory = redGuardDirectory;
 			Last24HourTS = last24HourTS;
+			EveServerStatusThread = eveServerStatusThread;
 			
 		}
 		
@@ -41,5 +42,6 @@ namespace Injector
 		public string RedGuardDirectory { get { return GetValue( () => RedGuardDirectory ); } set { SetValue( () => RedGuardDirectory, value ); } }
 		public string EveDirectory { get { return GetValue( () => EveDirectory ); } set { SetValue( () => EveDirectory, value ); } }
 		public DateTime Last24HourTS { get { return GetValue( () => Last24HourTS ); } set { SetValue( () => Last24HourTS, value ); } }
+		public bool EveServerStatusThread { get { return GetValue( () => EveServerStatusThread ); } set { SetValue( () => EveServerStatusThread, value ); } }
 	}
 }

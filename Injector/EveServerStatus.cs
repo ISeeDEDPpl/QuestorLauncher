@@ -39,6 +39,8 @@ namespace Injector
 		public bool IsEveServerOnline {
 			get {
 				
+				if(!Cache.Instance.EveSettings.EveServerStatusThread)
+					return true;
 				if(DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme){
 					
 					return false;
@@ -138,6 +140,7 @@ namespace Injector
 					eveServerStatusThread.Abort();
 					Thread.Sleep(1);
 				}
+				Cache.Instance.Log("[GetEveServerStatusThread] Disposed.");
 			}
 		}
 		

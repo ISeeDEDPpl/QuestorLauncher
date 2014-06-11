@@ -57,6 +57,7 @@ namespace Injector
 			this.buttonCompileCopy = new System.Windows.Forms.Button();
 			this.buttonQuestorDownloadExtract = new System.Windows.Forms.Button();
 			this.notifyIconQL = new System.Windows.Forms.NotifyIcon(this.components);
+			this.checkBoxEveServerStatusThread = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridEveAccounts)).BeginInit();
 			this.contextMenuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -139,6 +140,7 @@ namespace Injector
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.checkBoxEveServerStatusThread);
 			this.groupBox1.Controls.Add(this.buttonGenNewBeginEnd);
 			this.groupBox1.Controls.Add(this.buttonKillAllEveInstances);
 			this.groupBox1.Controls.Add(this.buttonStopEveManger);
@@ -239,6 +241,16 @@ namespace Injector
 			this.notifyIconQL.Text = "notifyIcon1";
 			this.notifyIconQL.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconQLMouseDoubleClick);
 			// 
+			// checkBoxEveServerStatusThread
+			// 
+			this.checkBoxEveServerStatusThread.Location = new System.Drawing.Point(14, 180);
+			this.checkBoxEveServerStatusThread.Name = "checkBoxEveServerStatusThread";
+			this.checkBoxEveServerStatusThread.Size = new System.Drawing.Size(178, 21);
+			this.checkBoxEveServerStatusThread.TabIndex = 28;
+			this.checkBoxEveServerStatusThread.Text = "EveServerStatus Thread";
+			this.checkBoxEveServerStatusThread.UseVisualStyleBackColor = true;
+			this.checkBoxEveServerStatusThread.CheckedChanged += new System.EventHandler(this.CheckBoxEveServerStatusThreadCheckedChanged);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -262,6 +274,7 @@ namespace Injector
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.CheckBox checkBoxEveServerStatusThread;
 		private System.Windows.Forms.NotifyIcon notifyIconQL;
 		
 		
