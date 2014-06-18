@@ -165,7 +165,7 @@ namespace Injector
 		
 		
 		public bool EveProcessExists() {
-			return this.Pid != -1 && this.Pid != 0 && Process.GetProcesses().Any(x => x.Id == this.Pid);
+			return this.Pid != -1 && this.Pid != 0 && Process.GetProcesses().Any(x => x.Id == this.Pid) && Process.GetProcesses().FirstOrDefault(x => x.Id == this.Pid).ProcessName.ToLower().Contains("exefile");
 		}
 		
 		
