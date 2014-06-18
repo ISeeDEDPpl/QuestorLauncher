@@ -39,13 +39,13 @@ namespace Injector
 		public bool IsEveServerOnline {
 			get {
 				
-				if(!Cache.Instance.EveSettings.EveServerStatusThread)
-					return true;
 				if(DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme){
 					
 					return false;
 				}
 				
+				if(!Cache.Instance.EveSettings.EveServerStatusThread)
+					return true;
 				
 				return _isEveServerOnline;
 			}

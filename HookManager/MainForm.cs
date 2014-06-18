@@ -207,6 +207,7 @@ namespace HookManager
 			
 			switch(param){
 				case 0:
+//					QuestorManagerDomain.ExecuteAssembly(assemblyFolder + "\\Questor\\Questor.exe",args: new String[] {"-i"});
 					QuestorManagerDomain.ExecuteAssembly(assemblyFolder + "\\Questor\\Questor.exe",args: new String[] {"-i","-c", _args[1],"-u", _args[0], "-p", _args[2]});
 					break;
 				case 1:

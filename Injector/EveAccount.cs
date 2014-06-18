@@ -232,7 +232,7 @@ namespace Injector
 			String ChannelName = null;
 			RemoteHooking.IpcCreateServer<QuestorLauncherInterface.QuestorLauncherInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
 			
-			EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, " /triPlatform=dx9 /noconsole", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
+			EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, "\"/triPlatform=dx9 /noconsole\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
 			
 			bool redGuardDone = true;
 			if(this.UseRedGuard){
