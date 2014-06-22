@@ -81,6 +81,8 @@ namespace Injector
 				EveServerStatus.Instance.StartEveServerStatusThread();
 			}
 			
+			WCFServer.Instance.StartWCFServer();
+			
 		}
 		
 		void MainFormFormClosed(object sender, FormClosedEventArgs e)
@@ -191,6 +193,19 @@ namespace Injector
 			} else {
 				EveServerStatus.Instance.Dispose();
 			}
+		}
+		
+		void EditAdapteveHWProfileToolStripMenuItemClick(object sender, EventArgs e)
+		{
+			
+			var dgv = this.ActiveControl as DataGridView;
+			if ( dgv == null) return;
+			int index = (dgv.SelectedCells[0].OwningRow.Index);
+			EveAccount eA = Cache.Instance.EveAccountSerializeableSortableBindingList.List[index];
+			
+			var hwPf = new HWProfileForm(eA);
+   			hwPf.Show();
+			
 		}
 	}
 }

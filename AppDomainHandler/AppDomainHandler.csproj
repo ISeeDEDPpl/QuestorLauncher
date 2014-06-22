@@ -60,6 +60,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "$(SolutionDir)Injector/bin/Debug" /y /C</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "$(SolutionDir)Injector/bin/$(ConfigurationName)" /y /C</PostBuildEvent>
   </PropertyGroup>
 </Project>

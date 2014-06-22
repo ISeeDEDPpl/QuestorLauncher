@@ -35,7 +35,8 @@ namespace Injector
 		
 		public void DownloadQuestor() {
 			
-			string qLink = "https://github.com/duketwo/Questor/archive/BleedingEdge.zip";
+			string qLink =  "https://github.com/duketwo/Questor/archive/BleedingEdge.zip";
+//			string qLink = "https://github.com/ISeeDEDPpl/Questor/archive/BleedingEdge.zip";
 			
 			Cache.Instance.Log("Downloading Questor from: " + qLink);
 			

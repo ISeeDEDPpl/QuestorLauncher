@@ -47,7 +47,9 @@ namespace Injector
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.startInjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.editAdapteveHWProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.checkBoxEveServerStatusThread = new System.Windows.Forms.CheckBox();
 			this.buttonGenNewBeginEnd = new System.Windows.Forms.Button();
 			this.buttonKillAllEveInstances = new System.Windows.Forms.Button();
 			this.buttonStopEveManger = new System.Windows.Forms.Button();
@@ -57,7 +59,6 @@ namespace Injector
 			this.buttonCompileCopy = new System.Windows.Forms.Button();
 			this.buttonQuestorDownloadExtract = new System.Windows.Forms.Button();
 			this.notifyIconQL = new System.Windows.Forms.NotifyIcon(this.components);
-			this.checkBoxEveServerStatusThread = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridEveAccounts)).BeginInit();
 			this.contextMenuStrip1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -112,16 +113,17 @@ namespace Injector
 			// 
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.deleteToolStripMenuItem,
-									this.startInjectToolStripMenuItem});
+									this.startInjectToolStripMenuItem,
+									this.editAdapteveHWProfileToolStripMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(105, 48);
+			this.contextMenuStrip1.Size = new System.Drawing.Size(192, 92);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.deleteToolStripMenuItem1});
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
 			this.deleteToolStripMenuItem.Text = "delete";
 			// 
 			// deleteToolStripMenuItem1
@@ -134,9 +136,16 @@ namespace Injector
 			// startInjectToolStripMenuItem
 			// 
 			this.startInjectToolStripMenuItem.Name = "startInjectToolStripMenuItem";
-			this.startInjectToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+			this.startInjectToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
 			this.startInjectToolStripMenuItem.Text = "start";
 			this.startInjectToolStripMenuItem.Click += new System.EventHandler(this.StartInjectToolStripMenuItemClick);
+			// 
+			// editAdapteveHWProfileToolStripMenuItem
+			// 
+			this.editAdapteveHWProfileToolStripMenuItem.Name = "editAdapteveHWProfileToolStripMenuItem";
+			this.editAdapteveHWProfileToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+			this.editAdapteveHWProfileToolStripMenuItem.Text = "edit adapteve hw profile";
+			this.editAdapteveHWProfileToolStripMenuItem.Click += new System.EventHandler(this.EditAdapteveHWProfileToolStripMenuItemClick);
 			// 
 			// groupBox1
 			// 
@@ -155,6 +164,16 @@ namespace Injector
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Settings";
 			this.groupBox1.Enter += new System.EventHandler(this.GroupBox1Enter);
+			// 
+			// checkBoxEveServerStatusThread
+			// 
+			this.checkBoxEveServerStatusThread.Location = new System.Drawing.Point(14, 180);
+			this.checkBoxEveServerStatusThread.Name = "checkBoxEveServerStatusThread";
+			this.checkBoxEveServerStatusThread.Size = new System.Drawing.Size(178, 21);
+			this.checkBoxEveServerStatusThread.TabIndex = 28;
+			this.checkBoxEveServerStatusThread.Text = "EveServerStatus Thread";
+			this.checkBoxEveServerStatusThread.UseVisualStyleBackColor = true;
+			this.checkBoxEveServerStatusThread.CheckedChanged += new System.EventHandler(this.CheckBoxEveServerStatusThreadCheckedChanged);
 			// 
 			// buttonGenNewBeginEnd
 			// 
@@ -241,16 +260,6 @@ namespace Injector
 			this.notifyIconQL.Text = "notifyIcon1";
 			this.notifyIconQL.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconQLMouseDoubleClick);
 			// 
-			// checkBoxEveServerStatusThread
-			// 
-			this.checkBoxEveServerStatusThread.Location = new System.Drawing.Point(14, 180);
-			this.checkBoxEveServerStatusThread.Name = "checkBoxEveServerStatusThread";
-			this.checkBoxEveServerStatusThread.Size = new System.Drawing.Size(178, 21);
-			this.checkBoxEveServerStatusThread.TabIndex = 28;
-			this.checkBoxEveServerStatusThread.Text = "EveServerStatus Thread";
-			this.checkBoxEveServerStatusThread.UseVisualStyleBackColor = true;
-			this.checkBoxEveServerStatusThread.CheckedChanged += new System.EventHandler(this.CheckBoxEveServerStatusThreadCheckedChanged);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -274,6 +283,7 @@ namespace Injector
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.ToolStripMenuItem editAdapteveHWProfileToolStripMenuItem;
 		private System.Windows.Forms.CheckBox checkBoxEveServerStatusThread;
 		private System.Windows.Forms.NotifyIcon notifyIconQL;
 		

@@ -12,7 +12,7 @@
     </TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <NoWin32Manifest>False</NoWin32Manifest>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
@@ -85,9 +85,15 @@
   <ItemGroup>
     <Compile Include="Cache.cs" />
     <Compile Include="CurlManager.cs" />
+    <Compile Include="Driver.cs" />
     <Compile Include="EveAccount.cs" />
     <Compile Include="EveServerStatus.cs" />
     <Compile Include="EveSetting.cs" />
+    <Compile Include="HWProfileForm.cs" />
+    <Compile Include="HWProfileForm.Designer.cs">
+      <DependentUpon>HWProfileForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HWSettings.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -98,8 +104,12 @@
     <Compile Include="RedGuard.cs" />
     <Compile Include="EveManager.cs" />
     <Compile Include="UserPassGen.cs" />
+    <Compile Include="WCFServer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="HWProfileForm.resx">
+      <DependentUpon>HWProfileForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,8 +125,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>for %%a in ("$(SolutionDir)Libs") do if not exist "$(SolutionDir)Injector/bin/Debug/%%a" copy "%%a" "$(SolutionDir)Injector/bin/Debug" /-Y
+    <PreBuildEvent>for %%a in ("$(SolutionDir)Libs") do if not exist "$(SolutionDir)Injector/bin/Debug/%%a" copy "%%a" "$(SolutionDir)Injector/bin/$(ConfigurationName)" /-Y
 </PreBuildEvent>
-    <PostBuildEvent>xcopy "$(SolutionDir)Libs\EveSettings\*"  "$(SolutionDir)Injector\bin\Debug\EveSettings\" /E /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)Libs\EveSettings\*"  "$(SolutionDir)Injector\bin\$(ConfigurationName)\EveSettings\" /E /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

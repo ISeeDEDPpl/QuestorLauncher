@@ -37,7 +37,6 @@ namespace HookManager
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.logbox = new System.Windows.Forms.ListBox();
 			this.button1 = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
@@ -48,16 +47,9 @@ namespace HookManager
 			this.button3 = new System.Windows.Forms.Button();
 			this.button4 = new System.Windows.Forms.Button();
 			this.button5 = new System.Windows.Forms.Button();
+			this.logbox = new System.Windows.Forms.ListView();
+			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.SuspendLayout();
-			// 
-			// logbox
-			// 
-			this.logbox.FormattingEnabled = true;
-			this.logbox.ImeMode = System.Windows.Forms.ImeMode.Off;
-			this.logbox.Location = new System.Drawing.Point(12, 12);
-			this.logbox.Name = "logbox";
-			this.logbox.Size = new System.Drawing.Size(1518, 446);
-			this.logbox.TabIndex = 0;
 			// 
 			// button1
 			// 
@@ -147,12 +139,30 @@ namespace HookManager
 			this.button5.UseVisualStyleBackColor = true;
 			this.button5.Click += new System.EventHandler(this.Button5Click);
 			// 
+			// logbox
+			// 
+			this.logbox.AutoArrange = false;
+			this.logbox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+									this.columnHeader1});
+			this.logbox.Location = new System.Drawing.Point(12, 3);
+			this.logbox.Name = "logbox";
+			this.logbox.Size = new System.Drawing.Size(1529, 467);
+			this.logbox.TabIndex = 139;
+			this.logbox.UseCompatibleStateImageBehavior = false;
+			this.logbox.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader1
+			// 
+			this.columnHeader1.Text = "Logbox";
+			this.columnHeader1.Width = 1526;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1551, 524);
 			this.ControlBox = false;
+			this.Controls.Add(this.logbox);
 			this.Controls.Add(this.button5);
 			this.Controls.Add(this.button4);
 			this.Controls.Add(this.button3);
@@ -162,15 +172,15 @@ namespace HookManager
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.button1);
-			this.Controls.Add(this.logbox);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "MainForm";
 			this.Text = "HookManager";
-			this.Load += new System.EventHandler(this.MainFormLoad);
+			
 			this.Shown += new System.EventHandler(this.MainFormShown);
 			this.ResumeLayout(false);
 		}
+		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.Button button5;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button4;
@@ -181,6 +191,6 @@ namespace HookManager
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.ListBox logbox;
+		private System.Windows.Forms.ListView logbox;
 	}
 }

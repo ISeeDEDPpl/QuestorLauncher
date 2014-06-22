@@ -1,12 +1,12 @@
 ﻿/*
 /*
-* ---------------------------------------
-* User: duketwo
-* Date: 24.12.2013
-* Time: 16:26
-* 
-* ---------------------------------------
-*/
+ * ---------------------------------------
+ * User: duketwo
+ * Date: 24.12.2013
+ * Time: 16:26
+ * 
+ * ---------------------------------------
+ */
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -63,8 +63,6 @@ namespace Injector
 		}
 		
 		public EveAccount() {
-			
-			
 		}
 		
 		public string AccountName { get { return GetValue( () => AccountName ); } set { SetValue( () => AccountName, value ); } }
@@ -83,12 +81,15 @@ namespace Injector
 		
 		public bool IsActive { get { return GetValue( () => IsActive ); } set { SetValue( () => IsActive, value ); } }
 		
-		public bool UseRedGuard { get { return GetValue( () => UseRedGuard ); } set { SetValue( () => UseRedGuard, value ); } }
+		public bool UseRedGuard { get { return GetValue( () => UseRedGuard ); } set {  SetValue( () => UseRedGuard, value );} }
+		public bool UseAdaptEve { get { return GetValue( () => UseAdaptEve ); } set {  SetValue( () => UseAdaptEve, value );} }
 		//public bool AutoLogin { get { return GetValue( () => AutoLogin ); } set { SetValue( () => AutoLogin, value ); } }
 		public bool HideHookManager { get { return GetValue( () => HideHookManager ); } set { SetValue( () => HideHookManager, value ); } }
 		[BrowsableAttribute(false)]
 		public int Pid { get { return GetValue( () => Pid ); } set { SetValue( () => Pid, value ); } }
-		 
+		[BrowsableAttribute(false)]
+		public HWSettings HWSettings { get { return GetValue( () => HWSettings ); } set { SetValue( () => HWSettings, value ); } }
+		
 		
 		private static Random rnd = new Random();
 		private static DateTime lastEveInstanceKilled = DateTime.MinValue;
@@ -98,17 +99,17 @@ namespace Injector
 		public void GenerateNewBeginEnd() {
 			
 			try {
-	
-			
+				
+				
 				int startHour = int.Parse(this.StartHour.Split(':')[0]);
-			
+				
 				
 				startHour = rnd.Next(startHour-1,startHour+1);
 				int endHour = startHour+this.HoursPerDay;
-			
-				int r = rnd.Next(0,2);	
 				
-				 
+				int r = rnd.Next(0,2);
+				
+				
 				
 				int startMinute,endMinute;
 				if(r == 0){
@@ -118,19 +119,19 @@ namespace Injector
 					startMinute = rnd.Next(31,60);
 					endMinute = rnd.Next(31,60);
 				}
-			
+				
 				this.Begin = startHour.ToString() + ":" + (startMinute < 10 ? "0" : "") + startMinute.ToString();
 				this.End = endHour.ToString() + ":" + (endMinute < 10 ? "0" : "") + endMinute.ToString();
 				
 				
 				
-						
+				
 			} catch (Exception) {
 				throw;
 			}
 		}
-			
-			
+		
+		
 		
 		
 		private DateTime DtStartTime{ get { return DateTime.ParseExact(this.Begin, "H:m", null); } }
@@ -148,7 +149,7 @@ namespace Injector
 		}
 		
 		
-		public bool KillEveProcess(){ 
+		public bool KillEveProcess(){
 			
 			if(lastEveInstanceKilled.AddSeconds(waitTimeBetweenEveInstancesKills) < DateTime.UtcNow) {
 				lastEveInstanceKilled = DateTime.UtcNow;
@@ -158,9 +159,9 @@ namespace Injector
 					p.Kill();
 					return true;
 				}
-			} 
+			}
 			return false;
-				
+			
 		}
 		
 		
@@ -171,7 +172,7 @@ namespace Injector
 		
 		public void StartEveInject(){
 			
-			string[] args = new string[] {this.AccountName,this.CharacterName,this.Password,this.UseRedGuard.ToString(),this.HideHookManager.ToString()};
+			string[] args = new string[] {this.AccountName,this.CharacterName,this.Password,this.UseRedGuard.ToString(),this.HideHookManager.ToString(), this.UseAdaptEve.ToString(), WCFServer.Instance.GetPipeName};
 			this.Pid = 0;
 			int processId = -1;
 			
@@ -232,7 +233,7 @@ namespace Injector
 			String ChannelName = null;
 			RemoteHooking.IpcCreateServer<QuestorLauncherInterface.QuestorLauncherInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
 			
-			EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, "\"/triPlatform=dx9 /noconsole\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
+			EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, "\"/triPlatform=dx9\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
 			
 			bool redGuardDone = true;
 			if(this.UseRedGuard){
