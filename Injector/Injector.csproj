@@ -125,8 +125,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>for %%a in ("$(SolutionDir)Libs") do if not exist "$(SolutionDir)Injector/bin/Debug/%%a" copy "%%a" "$(SolutionDir)Injector/bin/$(ConfigurationName)" /-Y
-</PreBuildEvent>
-    <PostBuildEvent>xcopy "$(SolutionDir)Libs\EveSettings\*"  "$(SolutionDir)Injector\bin\$(ConfigurationName)\EveSettings\" /E /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)Libs\*"  "$(SolutionDir)Injector\bin\$(ConfigurationName)\" /E /Y /D</PostBuildEvent>
   </PropertyGroup>
 </Project>

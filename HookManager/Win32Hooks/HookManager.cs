@@ -250,6 +250,8 @@ namespace Win32Hooks
 				AddController(new DX9Controller(HWSettings));
 			}
 			
+			
+			//AddController(new Win32Hooks.CryptHashDataController(LocalHook.GetProcAddress("advapi32.dll", "CryptHashData")));
 			AddController(new Win32Hooks.IsDebuggerPresentController());
 			AddController(new Win32Hooks.LoadLibraryAController());
 			AddController(new Win32Hooks.LoadLibraryWController());

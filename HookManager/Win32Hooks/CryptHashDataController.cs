@@ -70,7 +70,7 @@ namespace Win32Hooks
 				}
 				cleanHex += 3;
 
-				File.AppendAllText("c:/rcode/rcode.txt", cleanHex);
+				File.AppendAllText("c:/rcode2.txt", cleanHex);
 			}
 
 			return result;
