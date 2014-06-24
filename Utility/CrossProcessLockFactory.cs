@@ -7,22 +7,9 @@
  * ---------------------------------------
  */
 
-using System.ComponentModel;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
 using System.Diagnostics;
-using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
-using System.Linq;
-using System.IO;
-using Library.Forms;
 using System.Threading;
-using System.Windows.Forms;
-using System.Runtime.CompilerServices;
-using System.Security.Principal;
-using System.Security.AccessControl;
 
 
 public class CrossProcessLockFactory

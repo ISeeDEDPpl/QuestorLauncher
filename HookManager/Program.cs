@@ -10,26 +10,36 @@ using System;
 using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
+using QuestorLauncher;
 
-namespace HookManager
+namespace QuestorLauncher
 {
+    
 	/// <summary>
 	/// Class with program entry point.
 	/// </summary>
-	internal sealed class Program
+	public static class Program
 	{
-		/// <summary>
+	    private static QuestorLauncher _Launcher;
+
+	    /// <summary>
 		/// Program entry point.
 		/// </summary>
 		/// 
-		[STAThread]
-		private static void Main(string[] args)
+		public static void Main(string[] args)
 		{
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm(args));		
-			
+		    try
+		    {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                _Launcher = new QuestorLauncher();
+		        QuestorLauncher.HookManagerParamaters = args;
+		        Application.Run(new QuestorLauncherUI());
+		    }
+		    catch (Exception)
+		    {
+		        
+		    }
 		}
-		
 	}
 }

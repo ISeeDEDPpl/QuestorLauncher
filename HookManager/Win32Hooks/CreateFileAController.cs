@@ -10,7 +10,7 @@ using System;
 using EasyHook;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using HookManager;
+using QuestorLauncher;
 using System.IO;
 
 namespace Win32Hooks
