@@ -16,13 +16,13 @@ namespace QuestorLauncher
 	/// </summary>
 	public partial class QuestorLauncherUI : Form
 	{
-        //private static QuestorLauncherUI _LauncherUI;
+        private static QuestorLauncher _QuestorLauncher;
 
-		//public Launcher(string[] args)
-		//{
-		//    InitializeComponent();
-        //    _launcher = new QuestorLauncher { HookManagerParamaters = args };
-		//}
+        public QuestorLauncherUI()
+		{
+		    InitializeComponent();
+            _QuestorLauncher = new QuestorLauncher {};
+		}
 	
 		void MainFormLoad(object sender, EventArgs e)
 		{
@@ -30,24 +30,24 @@ namespace QuestorLauncher
 		}
 		
 		void Button1Click(object sender, EventArgs e)
-        {	
-			//QuestorLauncher.UnloadQuestorAppDomain();
-            //QuestorLauncher.StartQuestor();
+        {
+            _QuestorLauncher.UnloadQuestorAppDomain();
+            _QuestorLauncher.StartQuestor();
 		}
 		
 		void Button2Click(object sender, EventArgs e){
-            //QuestorLauncher.UnloadQuestorAppDomain();
+            _QuestorLauncher.UnloadQuestorAppDomain();
 		}
 		
 		void Button3Click(object sender, System.EventArgs e)
 		{
-            //QuestorLauncher.UnloadQuestorAppDomain();
-            //QuestorLauncher.StartQuestorManager();
+            _QuestorLauncher.UnloadQuestorAppDomain();
+            _QuestorLauncher.StartQuestorManager();
 		}
 		void Button4Click(object sender, System.EventArgs e)
 		{
-            //QuestorLauncher.UnloadQuestorAppDomain();
-            //QuestorLauncher.StartValueDump();
+            _QuestorLauncher.UnloadQuestorAppDomain();
+            _QuestorLauncher.StartValueDump();
 		}
 		
 		void Button5Click(object sender, EventArgs e)
