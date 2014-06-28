@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using EasyHook;
 using Injector;
@@ -42,15 +46,9 @@ namespace QuestorLauncher
             {
                 if (_assemblyPath == null)
                 {
-                    if (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) != null)
-                    {
-                        _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                        return _assemblyPath;
-                    }
 
-                    return null;
+                    _assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 }
-
                 return _assemblyPath;
             }
         }
@@ -119,7 +117,6 @@ namespace QuestorLauncher
                 {
                     _QuestorLauncherUI.logbox.Items.Clear();
                 }
-
                 _QuestorLauncherUI.logbox.Items.Add(msg);
 
                 using (StreamWriter w = File.AppendText(AssemblyPath + "\\" + HookManagerParamaters[0] + "-HookManager.log"))
@@ -128,12 +125,14 @@ namespace QuestorLauncher
                 }
 
                 if (_QuestorLauncherUI.logbox.Items.Count > 1)
-                {
                     _QuestorLauncherUI.logbox.SelectedIndex = _QuestorLauncherUI.logbox.Items.Count - 1;
-                }
 
             }
-            catch (Exception ex) {}
+            catch (Exception)
+            {
+
+
+            }
         }
 
         public void Log(string msg)
@@ -154,7 +153,10 @@ namespace QuestorLauncher
                 _QuestorLauncherUI.logbox.Items.Add(msg);
                 _QuestorLauncherUI.logbox.SelectedIndex = _QuestorLauncherUI.logbox.Items.Count - 1;
             }
-            catch (Exception ex) {}
+            catch (Exception)
+            {
+                
+            }
         }
 
         void InitHooks()
@@ -330,4 +332,65 @@ namespace QuestorLauncher
             }
         }
     }
+}
+
+namespace wildert
+{
+    public class TimeOfTick : EventArgs
+    {
+        private DateTime TimeNow;
+        public DateTime Time
+        {
+            set
+            {
+                TimeNow = value;
+            }
+            get
+            {
+                return this.TimeNow;
+            }
+        }
+    }
+
+    public class Metronome
+    {
+        public event TickHandler Tick;
+        public delegate void TickHandler(Metronome m, TimeOfTick e);
+        public void Start()
+        {
+            while (true)
+            {
+                System.Threading.Thread.Sleep(3000);
+                if (Tick != null)
+                {
+                    TimeOfTick TOT = new TimeOfTick();
+                    TOT.Time = DateTime.Now;
+                    Tick(this, TOT);
+                }
+            }
+        }
+    }
+
+    public class Listener
+    {
+        public void Subscribe(Metronome m)
+        {
+            m.Tick += new Metronome.TickHandler(HeardIt);
+        }
+        private void HeardIt(Metronome m, TimeOfTick e)
+        {
+            System.Console.WriteLine("HEARD IT AT {0}", e.Time);
+        }
+    }
+
+    //class Test
+    //{
+    //    static void Main()
+    //    {
+    //        Metronome m = new Metronome();
+    //        Listener l = new Listener();
+    //        l.Subscribe(m);
+    //        m.Start();
+    //    }
+    //}
 }
