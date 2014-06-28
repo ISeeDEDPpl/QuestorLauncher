@@ -44,6 +44,8 @@ namespace Injector
 					return false;
 				}
 				
+				if(!Cache.Instance.EveSettings.EveServerStatusThread)
+					return true;
 				
 				return _isEveServerOnline;
 			}
@@ -138,6 +140,7 @@ namespace Injector
 					eveServerStatusThread.Abort();
 					Thread.Sleep(1);
 				}
+				Cache.Instance.Log("[GetEveServerStatusThread] Disposed.");
 			}
 		}
 		

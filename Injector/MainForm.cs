@@ -1,11 +1,11 @@
 ﻿/*
-* Created by SharpDevelop.
-* User: dserver
-* Date: 02.12.2013
-* Time: 09:09
-* 
-* To change this template use Tools | Options | Coding | Edit Standard Headers.
-*/
+ * Created by SharpDevelop.
+ * User: dserver
+ * Date: 02.12.2013
+ * Time: 09:09
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -75,7 +75,13 @@ namespace Injector
 		{
 			dataGridEveAccounts.DataSource = Cache.Instance.EveAccountSerializeableSortableBindingList.List;
 			textBoxEveLocation.Text = Cache.Instance.EveSettings.EveDirectory;
-			EveServerStatus.Instance.StartEveServerStatusThread();
+			
+			checkBoxEveServerStatusThread.Checked = Cache.Instance.EveSettings.EveServerStatusThread;
+			if(Cache.Instance.EveSettings.EveServerStatusThread) {
+				EveServerStatus.Instance.StartEveServerStatusThread();
+			}
+			
+			WCFServer.Instance.StartWCFServer();
 			
 		}
 		
@@ -128,7 +134,7 @@ namespace Injector
 		{
 			EveManager.Instance.Dispose();
 		}
-				
+		
 		
 		
 		void ButtonKillAllEveInstancesClick(object sender, EventArgs e)
@@ -157,6 +163,49 @@ namespace Injector
 		{
 			Questor.Instance.CompileQuestor();
 			Questor.Instance.CopyQuestorBinary();
+		}
+		
+		void MainFormResize(object sender, EventArgs e)
+		{
+			if ( WindowState == FormWindowState.Minimized )
+			{
+				this.Visible = false;
+				this.notifyIconQL.Visible = true;
+			}
+			
+		}
+		
+		void NotifyIconQLMouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			
+			((NotifyIcon)sender).Visible = !((NotifyIcon)sender).Visible;
+			this.Visible = !this.Visible;
+			WindowState = FormWindowState.Normal;
+			
+		}
+		
+		void CheckBoxEveServerStatusThreadCheckedChanged(object sender, EventArgs e)
+		{
+			Cache.Instance.EveSettings.EveServerStatusThread = ((CheckBox)sender).Checked;
+			
+			if(((CheckBox)sender).Checked) {
+				EveServerStatus.Instance.StartEveServerStatusThread();
+			} else {
+				EveServerStatus.Instance.Dispose();
+			}
+		}
+		
+		void EditAdapteveHWProfileToolStripMenuItemClick(object sender, EventArgs e)
+		{
+			
+			var dgv = this.ActiveControl as DataGridView;
+			if ( dgv == null) return;
+			int index = (dgv.SelectedCells[0].OwningRow.Index);
+			EveAccount eA = Cache.Instance.EveAccountSerializeableSortableBindingList.List[index];
+			
+			var hwPf = new HWProfileForm(eA);
+   			hwPf.Show();
+			
 		}
 	}
 }

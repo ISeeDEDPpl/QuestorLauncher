@@ -1,11 +1,11 @@
 ﻿/*
-* ---------------------------------------
-* User: duketwo
-* Date: 29.12.2013
-* Time: 21:20
-* 
-* ---------------------------------------
-*/
+ * ---------------------------------------
+ * User: duketwo
+ * Date: 29.12.2013
+ * Time: 21:20
+ * 
+ * ---------------------------------------
+ */
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -28,276 +28,85 @@ namespace HookManager
 	public partial class MainForm : Form
 	{
 		
-		
-		[DllImport("kernel32.dll")]
-		static extern bool SetProcessWorkingSetSize(IntPtr hProcess, uint
-			dwMinimumWorkingSetSize, uint dwMaximumWorkingSetSize);
-		[DllImport("kernel32.dll")]
-		static extern IntPtr GetCurrentProcess();
-		
-		[DllImport("user32.dll")]
-		public static extern IntPtr FindWindow(string lpClassName,string lpWindowName);
-		
-		[DllImport("user32.dll", CharSet=CharSet.Unicode)]
-		static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
-		
-		[DllImport("user32.dll", SetLastError=true)]
-		static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-		
-		
-		Thread QuestorThread = null;
-		AppDomain QuestorManagerDomain = null;
-		Win32Hooks.HookManager hookManager;
-		private string[] _args;
-		private object _lock;
-		
-		
-		
-		string _assemblyPath;
-		string AssemblyPath{
-			get {
-				if (_assemblyPath == null) {
-					
-					_assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-				}
-				return _assemblyPath;
-			}
-		}
-		
 		public MainForm(string[] args)
 		{
-			_args = args;
-			
-			// 									0				1					2					3						4		
-			//string[] args = new string[] {this.AccountName,this.CharacterName,this.Password,this.UseRedGuard.ToString(),this.HideHookManager.ToString()};
-			
-			if(args.Length > 0) {
-				string currentAssemblyPathSettings = AssemblyPath + "\\EveSettings\\";
-				Win32Hooks.HookManager.newPathLocalAppData = currentAssemblyPathSettings + args[0] + "_AppData\\";
-				Win32Hooks.HookManager.newPathPersonal = currentAssemblyPathSettings + args[0] + "_Personal\\";
-				string eveExecutionDir = System.IO.Directory.GetCurrentDirectory();
-				AppDomain.MonitoringIsEnabled = true;
-				
-			} else {
-				Environment.Exit(0);
-			}
-			
 			InitializeComponent();
-			Win32Hooks.HookManager.OnMessage += ThreadSafeAddlog;
-			InitHooks();
+			Win32Hooks.HookManager.OnMessage += ThreadSafeAddlog;	
+			Win32Hooks.HookManager.Instance.InitHooks();
 			RemoteHooking.WakeUpProcess();
+			Win32Hooks.HookManager.Instance.WaitForRedGuard();
+			Text = "HookManager [" + Win32Hooks.HookManager.Instance.CharName + "]";
+			Win32Hooks.HookManager.Instance.WaitForEVE();
+			Win32Hooks.HookManager.Instance.LaunchAppDomain(0);
 			
-			if(Boolean.Parse(_args[3])){
-				
-				IntPtr hwndRedGuard = IntPtr.Zero;
-				int i=0;
-				while(hwndRedGuard == IntPtr.Zero)
-				{
-					if(i>=150) return;
-					hwndRedGuard=FindWindow(null,"Red Guard Account Selection");
-					Application.DoEvents();
-					Thread.Sleep(200);
-					i++;
-				}
-			}
-			Text = "HookManager [" + _args[1] + "]";	
-			
-			_StartQuestor();
-	
 		}
-	
-		public void ThreadSafeAddlog(string str){
+		
+		public void ThreadSafeAddlog(string str, Color? col){
 			if(this.InvokeRequired){
-				this.Invoke( new Action(() => AddLog(str) ));
+				this.Invoke( new Action(() => AddLog(str, col) ));
 				
 			} else {
 				AddLog(str);
 			}
 		}
 		
-		void AddLog(string msg){
+		void AddLog(string msg, Color? col = null){
 			
 			try {
 				
+				col = col==null ? Color.Black : col;
 				msg = DateTime.UtcNow.ToString() + " " + msg;
+				var item = new ListViewItem();
+				item.Text = msg;
+				item.ForeColor = (Color)col;
 				
 				if (logbox.Items.Count >= 10000)
 				{
 					logbox.Items.Clear();
 				}
-				logbox.Items.Add(msg);
+				logbox.Items.Add(item);
 				
-				using (StreamWriter w = File.AppendText(AssemblyPath + "\\" + _args[0] + "-HookManager.log"))
+				using (StreamWriter w = File.AppendText(Win32Hooks.HookManager.Instance.AssemblyPath + "\\" + Win32Hooks.HookManager.Instance.CharName + "-HookManager.log"))
 				{
 					w.WriteLine(msg);
 				}
 				
 				if(logbox.Items.Count>1)
-					logbox.SelectedIndex = logbox.Items.Count - 1;
+					logbox.Items[logbox.Items.Count - 1].EnsureVisible();
 				
 			} catch (Exception) {
-				
-				
-			}
-			
-			
-		}
-		void MainFormLoad(object sender, EventArgs e)
-		{
-			
-		}
-		
-		
-		void InitHooks(){
-			
-			hookManager = new Win32Hooks.HookManager();
-			
-			//hookManager.AddController(new Win32Hooks.IsDebuggerPresentController());
-			hookManager.AddController(new Win32Hooks.LoadLibraryAController()); 
-			hookManager.AddController(new Win32Hooks.LoadLibraryWController());
-			hookManager.AddController(new Win32Hooks.GetModuleHandleWController());
-			hookManager.AddController(new Win32Hooks.GetModuleHandleAController());
-			//hookManager.AddController(new Win32Hooks.EnumProcessesController());
-			//hookManager.AddController(new Win32Hooks.MiniWriteDumpController());
-			
-			hookManager.AddController(new Win32Hooks.CreateFileWController());
-			hookManager.AddController(new Win32Hooks.CreateFileAController());
-			
-			
-			if(!hookManager.EverythingHooked()) {
-				MessageBox.Show("Hook error");
-				Environment.Exit(0);
-				Environment.FailFast("exit");
-			}
-			Win32Hooks.HookManager.Log("-----------Hooks initialized-----------");
-		}
-		
-		void DisposeHooks(){
-			if(hookManager != null){
-				hookManager.Dispose();
-				hookManager = null;
-				Win32Hooks.HookManager.Log("-----------Hooks disposed-----------");
 			}
 		}
 		
-		private bool doOnceStartQuestorManagerThread = true;
-		
-		void StartQuestorThread(int param){
-			
-			bool ready = false;
-			int i=0;
-			int currentPid = Process.GetCurrentProcess().Id;
-			uint hWndpid = 0;
-			
-			while(!ready && doOnceStartQuestorManagerThread)
-			{
-				if(i>=150) return;
-				IntPtr hwndEVE=FindWindow(null,"EVE");
-				GetWindowThreadProcessId(hwndEVE, out hWndpid);
-				if(currentPid == hWndpid)
-					ready = true;
-				Application.DoEvents();
-				Thread.Sleep(200);
-				i++;
-			}
-			
-			doOnceStartQuestorManagerThread = false;
-			
-			string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			
-			switch(param){
-				case 0:
-					QuestorManagerDomain.ExecuteAssembly(assemblyFolder + "\\Questor\\Questor.exe",args: new String[] {"-i","-c", _args[1],"-u", _args[0], "-p", _args[2]});
-					break;
-				case 1:
-					QuestorManagerDomain.ExecuteAssembly(assemblyFolder + "\\Questor\\QuestorManager.exe",args: new String[] {"-i"});
-					break;
-				case 2:
-					QuestorManagerDomain.ExecuteAssembly(assemblyFolder + "\\Questor\\ValueDump.exe",args: new String[] {"-i"});
-					break;
-				default: 
-					break;
-		} 
-			
-		}
-		
-		void StartQuestor(){
-			if(QuestorThread == null) {
-				DisposeHooks();
-				_StartQuestor();
-				InitHooks();
-			}
-		}
-		
-		void _StartQuestor(){
-			if(QuestorThread == null) {
-				QuestorManagerDomain = AppDomain.CreateDomain("QuestorDomain");
-				QuestorThread = new Thread(delegate() { StartQuestorThread(0); });
-				QuestorThread.Start();
-			}
-		}
-		
-		void StartQuestorManager(){
-			
-			if(QuestorThread == null) {
-				DisposeHooks();
-				QuestorManagerDomain = AppDomain.CreateDomain("QuestorDomain");
-				QuestorThread = new Thread(delegate() { StartQuestorThread(1); });
-				QuestorThread.Start();
-				InitHooks();
-			}
-		}
-		
-		void StartValueDump(){
-			
-			if(QuestorThread == null) {
-				DisposeHooks();
-				QuestorManagerDomain = AppDomain.CreateDomain("QuestorDomain");
-				QuestorThread = new Thread(delegate() { StartQuestorThread(2); });
-				QuestorThread.Start();
-				InitHooks();
-			}
-		}
-		
-		void UnloadQuestorAppDomain(){
-			if(QuestorThread != null){
-				while(QuestorThread.IsAlive){
-					
-					Thread.Sleep(2);
-					QuestorThread.Abort();
-				}
-				DisposeHooks();
-				AppDomain.Unload(QuestorManagerDomain);
-				QuestorManagerDomain = null;
-				QuestorThread = null;
-			}
-		}
+
 		
 		void Button1Click(object sender, EventArgs e){
-			
-			UnloadQuestorAppDomain();
-			StartQuestor();
-			
-			
+			// start questor
+			Win32Hooks.HookManager.Instance.LaunchAppDomain(0);
 		}
 		
 		void Button2Click(object sender, EventArgs e){
-			UnloadQuestorAppDomain();
+			// unload appdomain
+			Win32Hooks.HookManager.Instance.UnloadAppDomain();
+			
 		}
 		
 		void Button3Click(object sender, System.EventArgs e)
 		{
-			UnloadQuestorAppDomain();
-			StartQuestorManager();
+			// start qm
+			Win32Hooks.HookManager.Instance.LaunchAppDomain(1);
 		}
 		void Button4Click(object sender, System.EventArgs e)
 		{
-			UnloadQuestorAppDomain();
-			StartValueDump();
+			// start valuedump
+			Win32Hooks.HookManager.Instance.LaunchAppDomain(2);
 		}
 		
 		
-		
+		[DllImport("kernel32.dll")]
+		static extern IntPtr GetCurrentProcess();
+		[DllImport("kernel32.dll")]
+		static extern bool SetProcessWorkingSetSize(IntPtr hProcess, uint dwMinimumWorkingSetSize, uint dwMaximumWorkingSetSize);
 		private bool doOnceTimerAppDomainMemoryTick = true;
 		void TimerAppDomainMemoryTick(object sender, EventArgs e)
 		{
@@ -310,22 +119,23 @@ namespace HookManager
 				
 			}
 			
-			if(QuestorManagerDomain != null) {
+			if(Win32Hooks.HookManager.Instance.QAppDomain != null) {
 				
-				labelTotalAllocated.Text = Math.Round(QuestorManagerDomain.MonitoringTotalAllocatedMemorySize/1048576D,2).ToString() + " mb";
-				labelSurvived.Text = Math.Round(QuestorManagerDomain.MonitoringSurvivedMemorySize/1048576D,2).ToString() + " mb";
+				labelTotalAllocated.Text = Math.Round(Win32Hooks.HookManager.Instance.QAppDomain.MonitoringTotalAllocatedMemorySize/1048576D,2).ToString() + " mb";
+				labelSurvived.Text = Math.Round(Win32Hooks.HookManager.Instance.QAppDomain.MonitoringSurvivedMemorySize/1048576D,2).ToString() + " mb";
 			}
 		}
 		
 		void MainFormShown(object sender, EventArgs e)
 		{
-			if(bool.Parse(_args[4]))
+			if(Win32Hooks.HookManager.Instance.HideHookManager)
 				this.Hide();
 		}
 		
 		void Button5Click(object sender, EventArgs e)
 		{
+			EnvVars.PrintEnvVars();
 			Win32Hooks.Stealthtest.Test();
-		}	
+		}
 	}
 }

@@ -63,19 +63,19 @@ namespace Win32Hooks
 		                                          UInt32 dwFlags, [In] [Out] IntPtr pszPath)
 		{
 			int ret = SHGetFolderPathA(hwndOwner,nFolder,hToken,dwFlags,pszPath);
-			if(nFolder == 0x0005 && Win32Hooks.HookManager.newPathPersonal != null){ // PERSONAL
+			if(nFolder == 0x0005 && Win32Hooks.HookManager.Instance.newPathPersonal != null){ // PERSONAL
 				
 				
-				string str = Win32Hooks.HookManager.newPathPersonal  + Char.MinValue;
+				string str = Win32Hooks.HookManager.Instance.newPathPersonal  + Char.MinValue;
 				byte[] buffer = ASCIIEncoding.ASCII.GetBytes(str);
 				for(int i =0; i<buffer.Length; i++){
 					Marshal.WriteByte(pszPath,i,buffer[i]);
 				}
 			}
 			
-			if(nFolder == 0x001c && Win32Hooks.HookManager.newPathLocalAppData != null) { // LOCAL APP DATA
+			if(nFolder == 0x001c && Win32Hooks.HookManager.Instance.newPathLocalAppData != null) { // LOCAL APP DATA
 
-				string str = Win32Hooks.HookManager.newPathLocalAppData  + Char.MinValue;
+				string str = Win32Hooks.HookManager.Instance.newPathLocalAppData  + Char.MinValue;
 				byte[] buffer = ASCIIEncoding.ASCII.GetBytes(str);
 				for(int i =0; i<buffer.Length; i++){
 					Marshal.WriteByte(pszPath,i,buffer[i]);

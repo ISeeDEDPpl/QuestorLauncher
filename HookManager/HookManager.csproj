@@ -46,6 +46,9 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -53,26 +56,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnvVars.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WCFClient.cs" />
     <Compile Include="Win32Hooks\CreateFileAController.cs" />
     <Compile Include="Win32Hooks\CreateFileWController.cs" />
+    <Compile Include="Win32Hooks\CryptHashDataController.cs" />
+    <Compile Include="Win32Hooks\DX9Controller.cs" />
     <Compile Include="Win32Hooks\EnumProcessesController.cs" />
+    <Compile Include="Win32Hooks\GetAdaptersInfoController.cs" />
     <Compile Include="Win32Hooks\GetModuleHandleAController.cs" />
     <Compile Include="Win32Hooks\GetModuleHandleWController.cs" />
+    <Compile Include="Win32Hooks\GlobalMemoryStatusController.cs" />
     <Compile Include="Win32Hooks\HookManager.cs" />
     <Compile Include="Win32Hooks\IHook.cs" />
     <Compile Include="Win32Hooks\IsDebuggerPresentController.cs" />
     <Compile Include="Win32Hooks\LoadLibraryAController.cs" />
     <Compile Include="Win32Hooks\LoadLibraryWController.cs" />
     <Compile Include="Win32Hooks\MiniWriteDumpController.cs" />
+    <Compile Include="Win32Hooks\RegQueryValueExAController.cs" />
     <Compile Include="Win32Hooks\SHGetFolderPathAController.cs" />
     <Compile Include="Win32Hooks\SHGetFolderPathWController.cs" />
     <Compile Include="Win32Hooks\Stealthtest.cs" />
+    <Compile Include="Win32Hooks\WinSockConnectController.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -85,8 +96,18 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Injector\Injector.csproj">
+      <Project>{3A3CAA22-17BA-48B5-8321-AA2B226CAB98}</Project>
+      <Name>Injector</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{94679EBB-CB9F-43E1-AB60-DBABC0E726C9}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "$(SolutionDir)Injector/bin/Debug" /y /C</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "$(SolutionDir)Injector/bin/$(ConfigurationName)" /y /C</PostBuildEvent>
   </PropertyGroup>
 </Project>
