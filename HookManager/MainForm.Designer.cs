@@ -6,24 +6,33 @@
  * 
  * ---------------------------------------
  */
-
-using Injector;
-
-namespace QuestorLauncher
+namespace HookManager
 {
-    partial class QuestorLauncherUI
+	partial class MainForm
 	{
+		
+		
+		
 		private System.ComponentModel.IContainer components = null;
 		
-		//protected override void Dispose(bool disposing)
-		//{
-		//	if (disposing) {
-		//		if (components != null) {
-		//			components.Dispose();
-		//		}
-		//	}
-		//	base.Dispose(disposing);
-		//}
+		
+		
+		
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing) {
+				if (components != null) {
+					components.Dispose();
+				}
+			}
+			base.Dispose(disposing);
+		}
+		
+		
+		
+		
+		
 		
 		private void InitializeComponent()
 		{
@@ -39,7 +48,7 @@ namespace QuestorLauncher
 			this.button3 = new System.Windows.Forms.Button();
 			this.button4 = new System.Windows.Forms.Button();
 			this.button5 = new System.Windows.Forms.Button();
-			//this.SuspendLayout();
+			this.SuspendLayout();
 			// 
 			// logbox
 			// 
@@ -90,7 +99,7 @@ namespace QuestorLauncher
 			// 
 			this.timerAppDomainMemory.Enabled = true;
 			this.timerAppDomainMemory.Interval = 1000;
-			this.timerAppDomainMemory.Tick += new System.EventHandler(QuestorLauncher.TimerAppDomainMemoryTick);
+			this.timerAppDomainMemory.Tick += new System.EventHandler(this.TimerAppDomainMemoryTick);
 			// 
 			// label2
 			// 
@@ -159,19 +168,19 @@ namespace QuestorLauncher
 			this.Name = "MainForm";
 			this.Text = "HookManager";
 			this.Load += new System.EventHandler(this.MainFormLoad);
-			this.Shown += new System.EventHandler(QuestorLauncher.MainFormShown);
+			this.Shown += new System.EventHandler(this.MainFormShown);
 			this.ResumeLayout(false);
 		}
 		private System.Windows.Forms.Button button5;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button4;
-	    public System.Windows.Forms.Label labelSurvived;
+		private System.Windows.Forms.Label labelSurvived;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Timer timerAppDomainMemory;
-	    public System.Windows.Forms.Label labelTotalAllocated;
+		private System.Windows.Forms.Label labelTotalAllocated;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button button2;
-	    internal System.Windows.Forms.ListBox logbox;
+		private System.Windows.Forms.ListBox logbox;
 	}
 }

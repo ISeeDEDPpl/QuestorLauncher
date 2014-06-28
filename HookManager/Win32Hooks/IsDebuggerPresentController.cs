@@ -8,7 +8,7 @@
  */
 using System;
 using EasyHook;
-using QuestorLauncher;
+using HookManager;
 
 namespace Win32Hooks
 {
