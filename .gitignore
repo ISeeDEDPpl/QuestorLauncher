@@ -35,3 +35,4 @@ CompileSettings.xml
 .HistoryData/LocalHistory/
 *.vsp
 *.psess
+output/
