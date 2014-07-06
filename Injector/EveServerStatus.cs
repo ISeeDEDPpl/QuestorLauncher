@@ -28,9 +28,11 @@ namespace Injector
 		
 		private bool _isEveServerOnline = false;
 		public bool IsEveServerOnline {
-			get {
+			get 
+            {
 				
-				if(DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme){
+				if(DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme)
+                {
 					
 					return false;
 				}
@@ -47,14 +49,17 @@ namespace Injector
 			
 		}
 		
-		public static EveServerStatus Instance {
+		public static EveServerStatus Instance 
+        {
 			get { return _instance; }
 		}
 		
 		
-		public void StartEveServerStatusThread(){
+		public void StartEveServerStatusThread()
+        {
 			Cache.Instance.Log("Starting EveServerStatus Thread.");
-			if(eveServerStatusThread == null || !eveServerStatusThread.IsAlive){
+			if(eveServerStatusThread == null || !eveServerStatusThread.IsAlive)
+            {
 				eveServerStatusThread = new Thread(GetEveServerStatusThread);
 				eveServerStatusThread.Start();
 			}
@@ -63,39 +68,49 @@ namespace Injector
 		
 		private void GetEveServerStatusThread() {
 			
-			while(true) {
+			while(true) 
+            {
 				
-				if(DateTime.UtcNow >= nextEveServerStatusCheck){
+				if(DateTime.UtcNow >= nextEveServerStatusCheck)
+                {
 					
 					nextEveServerStatusCheck = DateTime.UtcNow.AddSeconds(rnd.Next(180,360));
 					
 					string ServerStatusXml = CurlManager.Instance.GetPostPage("https://api.eveonline.com/Server/ServerStatus.xml.aspx","","","");
 					//Cache.Instance.Log(ServerStatusXml);
-					if(!String.IsNullOrEmpty(ServerStatusXml) && !ServerStatusXml.Contains("Error")){
+					if(!String.IsNullOrEmpty(ServerStatusXml) && !ServerStatusXml.Contains("Error"))
+                    {
 //						Cache.Instance.Log("[GetEveServerStatusThread] !String.IsNullOrEmpty(ServerStatusXml)");
 						using (XmlReader reader = XmlReader.Create(new StringReader(ServerStatusXml)))
 						{
 							while (reader.Read())
 							{
-								try {
-									if(reader.Name.Equals("serverOpen")){
+								try 
+                                {
+									if(reader.Name.Equals("serverOpen"))
+                                    {
 										string innerValue = reader.ReadString();
-										if(!string.IsNullOrEmpty(innerValue)) {
+										if(!string.IsNullOrEmpty(innerValue)) 
+                                        {
 											
 											
 											bool srvOpen = bool.Parse(innerValue);
-											if(srvOpen){
+											if(srvOpen)
+                                            {
 												_isEveServerOnline = srvOpen;
 											}	
 										}
 									}
 									
-									if(reader.Name.Equals("cachedUntil")){
+									if(reader.Name.Equals("cachedUntil"))
+                                    {
 										string innerValue = reader.ReadString();
-										if(!string.IsNullOrEmpty(innerValue)){
+										if(!string.IsNullOrEmpty(innerValue))
+                                        {
 											
 											DateTime dt = DateTime.Parse(innerValue);
-											if(dt > DateTime.UtcNow){
+											if(dt > DateTime.UtcNow)
+                                            {
 												Cache.Instance.Log("[GetEveServerStatusThread] Cached Until // Next EveServer-Statuscheck:  " + innerValue);
 												nextEveServerStatusCheck = dt.AddSeconds(10);
 											}
@@ -103,7 +118,9 @@ namespace Injector
 									
 									}
 									
-								} catch (Exception e) {
+								} 
+                                catch (Exception e) 
+                                {
 									
 									Cache.Instance.Log("[GetEveServerStatusThread]  Exception: " + e.ToString());
 								}
@@ -112,11 +129,14 @@ namespace Injector
 							
 						}
 						
-					} else {
+					} 
+                    else 
+                    {
 						Cache.Instance.Log("[GetEveServerStatusThread] String.IsNullOrEmpty(ServerStatusXml), couldnt retrieve XML");
 						_isEveServerOnline = true;
 					}
 				}
+
 				Thread.Sleep(10);
 			}
 			
@@ -125,12 +145,15 @@ namespace Injector
 		
 		public void Dispose(){
 			
-			if(eveServerStatusThread != null){
-				while(eveServerStatusThread.IsAlive){
+			if(eveServerStatusThread != null)
+            {
+				while(eveServerStatusThread.IsAlive)
+                {
 					
 					eveServerStatusThread.Abort();
 					Thread.Sleep(1);
 				}
+
 				Cache.Instance.Log("[GetEveServerStatusThread] Disposed.");
 			}
 		}

@@ -52,51 +52,74 @@ namespace Injector
 		
 		public string GetPostPage(string url, string postData, string proxyPort, string userPassword, bool deleteCookies = true)
 		{
-			lock(thisLock){
-				
-				if(deleteCookies)
-					DeleteCookies();
-				
-				Curl.GlobalInit((int)CURLinitFlag.CURL_GLOBAL_ALL);
-				Easy easy = new Easy();
-				try
-				{
-					this.CurrentPage = string.Empty;
-					Easy.WriteFunction wf = this.WriteData;
-					easy.SetOpt(CURLoption.CURLOPT_URL, url);
-					easy.SetOpt(CURLoption.CURLOPT_WRITEFUNCTION, wf);
-					easy.SetOpt(CURLoption.CURLOPT_SSL_VERIFYHOST, 0);
-					easy.SetOpt(CURLoption.CURLOPT_SSL_VERIFYPEER, 0);
-					if (!string.IsNullOrEmpty(proxyPort)) easy.SetOpt(CURLoption.CURLOPT_PROXY, proxyPort);
-					if (!string.IsNullOrEmpty(userPassword)) easy.SetOpt(CURLoption.CURLOPT_PROXYUSERPWD, userPassword);
-					if (!string.IsNullOrEmpty(proxyPort)) easy.SetOpt(CURLoption.CURLOPT_PROXYTYPE, CURLproxyType.CURLPROXY_SOCKS5);
-					easy.SetOpt(CURLoption.CURLOPT_USERAGENT, UserAgent);
-					easy.SetOpt(CURLoption.CURLOPT_COOKIEFILE, "injector.cookie");
-					easy.SetOpt(CURLoption.CURLOPT_COOKIEJAR, "injector.cookie");
-					easy.SetOpt(CURLoption.CURLOPT_FOLLOWLOCATION, 1);
-					easy.SetOpt(CURLoption.CURLOPT_AUTOREFERER, 1);
-					easy.SetOpt(CURLoption.CURLOPT_CONNECTTIMEOUT, 15);
-					if (!string.IsNullOrEmpty(postData)) easy.SetOpt(CURLoption.CURLOPT_POSTFIELDS, postData);
-					easy.Perform();
-					return this.CurrentPage;
-					
-					
-				}
-				catch (Exception exp){
-					if(exp is ThreadAbortException){
-						this.CurrentPage = string.Empty;
-					}
-					Cache.Instance.Log("[GetPostPage] Exception " + exp.ToString());
-				}
-				finally
-				{
-					if (easy != null)
-						easy.Cleanup();
-					Curl.GlobalCleanup();
-				}
-				return this.CurrentPage = string.Empty;
-			}
+		    try
+		    {
+                lock (thisLock)
+                {
+
+                    if (deleteCookies)
+                        DeleteCookies();
+
+                    Curl.GlobalInit((int)CURLinitFlag.CURL_GLOBAL_ALL);
+                    Easy easy = new Easy();
+                    try
+                    {
+                        this.CurrentPage = string.Empty;
+                        Easy.WriteFunction wf = this.WriteData;
+                        easy.SetOpt(CURLoption.CURLOPT_URL, url);
+                        easy.SetOpt(CURLoption.CURLOPT_WRITEFUNCTION, wf);
+                        easy.SetOpt(CURLoption.CURLOPT_SSL_VERIFYHOST, 0);
+                        easy.SetOpt(CURLoption.CURLOPT_SSL_VERIFYPEER, 0);
+                        if (!string.IsNullOrEmpty(proxyPort)) easy.SetOpt(CURLoption.CURLOPT_PROXY, proxyPort);
+                        if (!string.IsNullOrEmpty(userPassword)) easy.SetOpt(CURLoption.CURLOPT_PROXYUSERPWD, userPassword);
+                        if (!string.IsNullOrEmpty(proxyPort)) easy.SetOpt(CURLoption.CURLOPT_PROXYTYPE, CURLproxyType.CURLPROXY_SOCKS5);
+                        easy.SetOpt(CURLoption.CURLOPT_USERAGENT, UserAgent);
+                        easy.SetOpt(CURLoption.CURLOPT_COOKIEFILE, "injector.cookie");
+                        easy.SetOpt(CURLoption.CURLOPT_COOKIEJAR, "injector.cookie");
+                        easy.SetOpt(CURLoption.CURLOPT_FOLLOWLOCATION, 1);
+                        easy.SetOpt(CURLoption.CURLOPT_AUTOREFERER, 1);
+                        easy.SetOpt(CURLoption.CURLOPT_CONNECTTIMEOUT, 15);
+                        if (!string.IsNullOrEmpty(postData)) easy.SetOpt(CURLoption.CURLOPT_POSTFIELDS, postData);
+                        easy.Perform();
+                        return this.CurrentPage;
+
+
+                    }
+                    catch (Exception exp)
+                    {
+                        if (exp is ThreadAbortException)
+                        {
+                            this.CurrentPage = string.Empty;
+                        }
+                        
+                        Cache.Instance.Log("[GetPostPage] Exception " + exp.ToString());
+                    }
+                    finally
+                    {
+                        if (easy != null)
+                            easy.Cleanup();
+                        Curl.GlobalCleanup();
+                    }
+
+                    return this.CurrentPage = string.Empty;
+                }
 			
+		    }
+            catch (Exception exp)
+            {
+                if (exp is ThreadAbortException)
+                {
+                    this.CurrentPage = string.Empty;
+                }
+
+                Cache.Instance.Log("[GetPostPage] Exception " + exp.ToString());
+            }
+            finally
+            {
+                //Curl.GlobalCleanup();
+            }
+
+            return this.CurrentPage = string.Empty;
 		}
 		
 		public void DeleteCookies(){

@@ -96,37 +96,33 @@ namespace Injector
 		private static int waitTimeBetweenEveInstancesKills = rnd.Next(15,25);
 		
 		
-		public void GenerateNewBeginEnd() {
-			
-			try {
-				
-				
+		public void GenerateNewBeginEnd() 
+        {
+			try 
+            {
 				int startHour = int.Parse(this.StartHour.Split(':')[0]);
-				
-				
 				startHour = rnd.Next(startHour-1,startHour+1);
 				int endHour = startHour+this.HoursPerDay;
-				
 				int r = rnd.Next(0,2);
-				
-				
-				
 				int startMinute,endMinute;
-				if(r == 0){
+				
+                if (r == 0)
+                {
 					startMinute = rnd.Next(0,31);
 					endMinute = rnd.Next(0,31);
-				} else {
+				} 
+                else 
+                {
 					startMinute = rnd.Next(31,60);
 					endMinute = rnd.Next(31,60);
 				}
 				
 				this.Begin = startHour.ToString() + ":" + (startMinute < 10 ? "0" : "") + startMinute.ToString();
 				this.End = endHour.ToString() + ":" + (endMinute < 10 ? "0" : "") + endMinute.ToString();
-				
-				
-				
-				
-			} catch (Exception) {
+			
+			} 
+            catch (Exception)
+            {
 				throw;
 			}
 		}

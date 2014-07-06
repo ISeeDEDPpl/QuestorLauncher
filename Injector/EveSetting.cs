@@ -26,16 +26,71 @@ namespace Injector
 			RedGuardDirectory = redGuardDirectory;
 			Last24HourTS = last24HourTS;
 			EveServerStatusThread = eveServerStatusThread;
-			
 		}
 		
-		public EveSetting(){ 
-			
+		public EveSetting()
+        { 
 		}
-		
-		public string RedGuardDirectory { get { return GetValue( () => RedGuardDirectory ); } set { SetValue( () => RedGuardDirectory, value ); } }
-		public string EveDirectory { get { return GetValue( () => EveDirectory ); } set { SetValue( () => EveDirectory, value ); } }
-		public DateTime Last24HourTS { get { return GetValue( () => Last24HourTS ); } set { SetValue( () => Last24HourTS, value ); } }
-		public bool EveServerStatusThread { get { return GetValue( () => EveServerStatusThread ); } set { SetValue( () => EveServerStatusThread, value ); } }
+
+	    private string _redGuardDirectory;
+        
+	    public string RedGuardDirectory
+	    {
+	        get
+	        {
+	            if (string.IsNullOrEmpty(_redGuardDirectory))
+	            {
+	                return _redGuardDirectory;
+	            }
+
+	            return string.Empty;
+	        }
+	        private set
+	        {
+	            _redGuardDirectory = value;
+	        }
+	    }
+
+	    private string _eveDirectory;
+		public string EveDirectory 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_eveDirectory))
+                {
+                    return _eveDirectory;
+                }
+
+                return string.Empty;
+            }
+            private set
+            {
+                _eveDirectory = value;
+            }
+        }
+
+	    public DateTime Last24HourTS
+	    {
+	        get
+	        {
+	            return GetValue( () => Last24HourTS );
+	        }
+	        set
+	        {
+	            SetValue( () => Last24HourTS, value );
+	        }
+	    }
+
+	    public bool EveServerStatusThread
+	    {
+	        get
+	        {
+	            return GetValue( () => EveServerStatusThread );
+	        }
+	        set
+	        {
+	            SetValue( () => EveServerStatusThread, value );
+	        }
+	    }
 	}
 }
