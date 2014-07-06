@@ -63,7 +63,7 @@ namespace Injector
 
                 return string.Empty;
             }
-            private set
+		    set
             {
                 _eveDirectory = value;
             }
