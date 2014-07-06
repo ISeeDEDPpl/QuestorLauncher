@@ -57,7 +57,7 @@ namespace Injector
 		
 		public void KillAllEveInstances() 
         {	
-			if(eveKillThread == null || !eveKillThread.IsAlive) 
+			if (eveKillThread == null || !eveKillThread.IsAlive) 
             {
 				Cache.Instance.Log("Starting KillAllEveInstances Thread.");
 				eveKillThread = new Thread(KillAllEveInstancesThread);
@@ -166,9 +166,9 @@ namespace Injector
 			//    eA.KillEveProcess();
 			//}
 			
-			if(eveManagerThread != null)
+			if (eveManagerThread != null)
             {
-				while(eveManagerThread.IsAlive)
+				while (eveManagerThread.IsAlive)
                 {
 					eveManagerThread.Abort();
 					Thread.Sleep(1);

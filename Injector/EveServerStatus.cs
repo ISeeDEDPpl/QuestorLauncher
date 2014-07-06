@@ -27,18 +27,21 @@ namespace Injector
 		
 		
 		private bool _isEveServerOnline = false;
-		public bool IsEveServerOnline {
+		public bool IsEveServerOnline 
+        {
 			get 
             {
-				
 				if(DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme)
                 {
 					
 					return false;
 				}
-				
-				if(!Cache.Instance.EveSettings.EveServerStatusThread)
-					return true;
+
+                if (Cache.Instance.EveSettings != null && Cache.Instance.EveSettings.EveServerStatusThread != null)
+                {
+                    if (!(bool)Cache.Instance.EveSettings.EveServerStatusThread)
+                        return true;    
+                }
 				
 				return _isEveServerOnline;
 			}
@@ -66,14 +69,12 @@ namespace Injector
 		}
 		
 		
-		private void GetEveServerStatusThread() {
-			
+		private void GetEveServerStatusThread() 
+        {			
 			while(true) 
             {
-				
 				if(DateTime.UtcNow >= nextEveServerStatusCheck)
                 {
-					
 					nextEveServerStatusCheck = DateTime.UtcNow.AddSeconds(rnd.Next(180,360));
 					
 					string ServerStatusXml = CurlManager.Instance.GetPostPage("https://api.eveonline.com/Server/ServerStatus.xml.aspx","","","");
@@ -124,11 +125,8 @@ namespace Injector
 									
 									Cache.Instance.Log("[GetEveServerStatusThread]  Exception: " + e.ToString());
 								}
-								
 							}
-							
 						}
-						
 					} 
                     else 
                     {
@@ -139,17 +137,15 @@ namespace Injector
 
 				Thread.Sleep(10);
 			}
-			
 		}
 		
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			if(eveServerStatusThread != null)
             {
 				while(eveServerStatusThread.IsAlive)
                 {
-					
 					eveServerStatusThread.Abort();
 					Thread.Sleep(1);
 				}
@@ -157,6 +153,5 @@ namespace Injector
 				Cache.Instance.Log("[GetEveServerStatusThread] Disposed.");
 			}
 		}
-		
 	}
 }

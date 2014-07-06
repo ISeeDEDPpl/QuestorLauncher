@@ -7,18 +7,12 @@
  * ---------------------------------------
  */
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Threading;
-using System.Diagnostics;
 using EasyHook;
-using Win32Hooks;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Runtime.CompilerServices;
+
 
 namespace HookManager
 {
@@ -27,36 +21,59 @@ namespace HookManager
 	/// </summary>
 	public partial class MainForm : Form
 	{
-		
 		public MainForm(string[] args)
 		{
-			InitializeComponent();
-			Win32Hooks.HookManager.OnMessage += ThreadSafeAddlog;	
-			Win32Hooks.HookManager.Instance.InitHooks();
-			RemoteHooking.WakeUpProcess();
-			Win32Hooks.HookManager.Instance.WaitForRedGuard();
-			Text = "HookManager [" + Win32Hooks.HookManager.Instance.CharName + "]";
-			Win32Hooks.HookManager.Instance.WaitForEVE();
-			Win32Hooks.HookManager.Instance.LaunchAppDomain(0);
-			
+		    try
+		    {
+                InitializeComponent();
+                Win32Hooks.HookManager.OnMessage += ThreadSafeAddlog;
+                Win32Hooks.HookManager.Instance.InitHooks();
+                RemoteHooking.WakeUpProcess();
+                Win32Hooks.HookManager.Instance.WaitForRedGuard();
+                Text = "HookManager [" + Win32Hooks.HookManager.Instance.CharName + "]";
+                Win32Hooks.HookManager.Instance.WaitForEVE();
+                Win32Hooks.HookManager.Instance.LaunchAppDomain(0);
+		    }
+		    catch (Exception)
+		    {
+		        
+		    }
 		}
 		
-		public void ThreadSafeAddlog(string str, Color? col){
-			if(this.InvokeRequired){
-				this.Invoke( new Action(() => AddLog(str, col) ));
-				
-			} else {
-				AddLog(str);
-			}
+		public void ThreadSafeAddlog(string str, Color? col)
+        {
+		    try
+		    {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(() => AddLog(str, col)));
+
+                }
+                else
+                {
+                    AddLog(str);
+                }
+		    }
+		    catch (Exception ex)
+		    {
+		        try
+		        {
+                    AddLog("[ThreadSafeAddlog] Exception [" + ex + "]");
+		        }
+		        catch (Exception)
+		        {
+                    Console.WriteLine("[ThreadSafeAddlog] Exception while throwing exception, lovely: [" + ex + "]");
+		        }
+		    }
 		}
 		
-		void AddLog(string msg, Color? col = null){
-			
-			try {
-				
+		void AddLog(string msg, Color? col = null)
+        {	
+			try 
+            {	
 				col = col==null ? Color.Black : col;
 				msg = DateTime.UtcNow.ToString() + " " + msg;
-				var item = new ListViewItem();
+				ListViewItem item = new ListViewItem();
 				item.Text = msg;
 				item.ForeColor = (Color)col;
 				
@@ -64,28 +81,42 @@ namespace HookManager
 				{
 					logbox.Items.Clear();
 				}
+
 				logbox.Items.Add(item);
 				
 				using (StreamWriter w = File.AppendText(Win32Hooks.HookManager.Instance.AssemblyPath + "\\" + Win32Hooks.HookManager.Instance.CharName + "-HookManager.log"))
 				{
 					w.WriteLine(msg);
 				}
-				
-				if(logbox.Items.Count>1)
-					logbox.Items[logbox.Items.Count - 1].EnsureVisible();
-				
-			} catch (Exception) {
+
+			    if (logbox.Items.Count > 1)
+			    {
+                    logbox.Items[logbox.Items.Count - 1].EnsureVisible();
+			    }
 			}
+            catch (Exception ex)
+            {
+                try
+                {
+                    AddLog("[AddLog] Exception [" + ex + "]");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("[AddLog] Exception while throwing exception, lovely: [" + ex + "]");
+                }
+            }
 		}
 		
 
 		
-		void Button1Click(object sender, EventArgs e){
+		void Button1Click(object sender, EventArgs e)
+        {
 			// start questor
 			Win32Hooks.HookManager.Instance.LaunchAppDomain(0);
 		}
 		
-		void Button2Click(object sender, EventArgs e){
+		void Button2Click(object sender, EventArgs e)
+        {
 			// unload appdomain
 			Win32Hooks.HookManager.Instance.UnloadAppDomain();
 			
@@ -110,7 +141,8 @@ namespace HookManager
 		private bool doOnceTimerAppDomainMemoryTick = true;
 		void TimerAppDomainMemoryTick(object sender, EventArgs e)
 		{
-			if(doOnceTimerAppDomainMemoryTick) {
+			if(doOnceTimerAppDomainMemoryTick) 
+            {
 				uint min = 104857600;
 				uint max = 838860800;
 				AddLog("SetProcessWorkingSetSize()");
@@ -119,7 +151,8 @@ namespace HookManager
 				
 			}
 			
-			if(Win32Hooks.HookManager.Instance.QAppDomain != null) {
+			if(Win32Hooks.HookManager.Instance.QAppDomain != null) 
+            {
 				
 				labelTotalAllocated.Text = Math.Round(Win32Hooks.HookManager.Instance.QAppDomain.MonitoringTotalAllocatedMemorySize/1048576D,2).ToString() + " mb";
 				labelSurvived.Text = Math.Round(Win32Hooks.HookManager.Instance.QAppDomain.MonitoringSurvivedMemorySize/1048576D,2).ToString() + " mb";

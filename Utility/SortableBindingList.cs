@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Reflection;
-using System.Linq;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Xml.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
+
 
 namespace Library.Forms
 {
@@ -106,31 +100,44 @@ namespace Library.Forms
 		//XmlDeserialize method
 		public  SortableBindingList<T> XmlDeserialize(string fileName)
 		{
-			using(CrossProcessLockFactory.CreateCrossProcessLock(Path.GetFileName(fileName))){
-				string data = System.IO.File.ReadAllText(fileName);
-				System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(SortableBindingList<T>));
-				TextReader reader = new StringReader(data);
-				object obj = xmlSer.Deserialize(reader);
-				
-				return (SortableBindingList<T>)obj;
-
-			}
+		    try
+		    {
+                using (CrossProcessLockFactory.CreateCrossProcessLock(Path.GetFileName(fileName)))
+                {
+                    try
+                    {
+                        string data = System.IO.File.ReadAllText(fileName);
+                        System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(typeof(SortableBindingList<T>));
+                        TextReader reader = new StringReader(data);
+                        object obj = xmlSer.Deserialize(reader);
+                        return (SortableBindingList<T>)obj;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("[XmlDeserialize] Exception [" + ex + "]");
+                        return null;
+                    }
+                }
+		    }
+		    catch (Exception ex)
+		    {
+                Console.WriteLine("[XmlDeserialize CreateCrossProcessLock] Exception [" + ex + "]");
+		        return null;
+		    }
 		}
 
 		//XmlSerialize method
 		public  void XmlSerialize(string fileName)
 		{
-			
-			using(CrossProcessLockFactory.CreateCrossProcessLock(Path.GetFileName(fileName))){
+			using(CrossProcessLockFactory.CreateCrossProcessLock(Path.GetFileName(fileName)))
+            {
 				using (System.IO.StreamWriter file = new System.IO.StreamWriter(fileName))
 				{
-					
 					System.Xml.Serialization.XmlSerializer xmlSer = new System.Xml.Serialization.XmlSerializer(this.GetType());
 					StringWriter textWriter = new StringWriter();
 					xmlSer.Serialize(textWriter, this);
 					xmlSer = null;
 					file.Write(textWriter.ToString());
-
 				}
 			}
 		}
@@ -138,10 +145,13 @@ namespace Library.Forms
 		
 		private int Compare(T lhs, T rhs)
 		{
-			var result = OnComparison(lhs, rhs);
+			int result = OnComparison(lhs, rhs);
 			//invert if descending
-			if (_sortDirection == ListSortDirection.Descending)
-				result = -result;
+		    if (_sortDirection == ListSortDirection.Descending)
+		    {
+		        result = -result;
+		    }
+
 			return result;
 		}
 		
@@ -153,18 +163,22 @@ namespace Library.Forms
 			{
 				return (rhsValue == null) ? 0 : -1; //nulls are equal
 			}
+
 			if (rhsValue == null)
 			{
 				return 1; //first has value, second doesn't
 			}
+
 			if (lhsValue is IComparable)
 			{
 				return ((IComparable)lhsValue).CompareTo(rhsValue);
 			}
+
 			if (lhsValue.Equals(rhsValue))
 			{
 				return 0; //both are the same
 			}
+
 			//not comparable, compare ToString
 			return lhsValue.ToString().CompareTo(rhsValue.ToString());
 		}

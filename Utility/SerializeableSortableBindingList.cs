@@ -23,66 +23,82 @@ namespace Utility
 	{
 		protected SortableBindingList<T> _List;
 		private string FilePathName { get; set; }
-		private string FileName { get; set; }
 		private DateTime LastSerialize { get; set; }
 		private int WriteDelayMs { get; set; }
+        
+		public SerializeableSortableBindingList(string filePathName, int writeDelayMs) 
+        {
+		    try
+		    {
+		        this.FilePathName = AssemblyPath + "\\" + filePathName;
+		        this.LastSerialize = DateTime.MinValue;
+		        
+		        this._List = new SortableBindingList<T>();
+		        this.WriteDelayMs = writeDelayMs;
 
-		
-		public SerializeableSortableBindingList(string filePathName, int writeDelayMs) {
-			
-			this.FilePathName = AssemblyPath + "\\" + filePathName;
-			this.LastSerialize = DateTime.MinValue;
-			this.FileName = Path.GetFileName(this.FilePathName);
+		        if (!File.Exists(this.FilePathName))
+		        {
+		            _List = new SortableBindingList<T>();
 
-			this._List = new SortableBindingList<T>();
-			this.WriteDelayMs = writeDelayMs;
-			
-			if(!File.Exists(this.FilePathName)) {
-				_List = new SortableBindingList<T>();
+		            _List.XmlSerialize(this.FilePathName);
+		            _List.XmlDeserialize(this.FilePathName);
+		        }
+		        else
+		        {
+		            this._List = _List.XmlDeserialize(this.FilePathName);
+		        }
 
-				_List.XmlSerialize(this.FilePathName);
-				_List.XmlDeserialize(this.FilePathName);
-			} else {
-				this._List = _List.XmlDeserialize(this.FilePathName);
-			}
-			this._List.ListChanged += OnListChangeHandler;
-		}
+		        if (_List != null)
+		        {
+                    this._List.ListChanged += OnListChangeHandler;    
+		        }
+		    }
+		    catch (Exception ex)
+		    {
+		        Console.WriteLine("[SerializeableSortableBindingList] Exception [" + ex + "]");
+		    }
+        }
 		
 		private void OnListChangeHandler(object sender, ListChangedEventArgs e) {
 			
 			OnListChange();
 		}
 		
-		private void OnListChange(){
-			
-			if(this.WriteDelayMs > 0) {
-				if(DateTime.UtcNow >= LastSerialize.AddMilliseconds(this.WriteDelayMs)) {
-					this.LastSerialize = DateTime.UtcNow;
-					_List.XmlSerialize(this.FilePathName);
-					
-				}
-			} else {
-				
+		private void OnListChange()
+        {
+			if(this.WriteDelayMs > 0) 
+            {
+                if (DateTime.UtcNow < LastSerialize.AddMilliseconds(this.WriteDelayMs)) return;
+                
+                this.LastSerialize = DateTime.UtcNow;
+                _List.XmlSerialize(this.FilePathName);
+            } 
+            else 
+            {
 				_List.XmlSerialize(this.FilePathName);
 				
 			}
 		}
 		
-		public SortableBindingList<T> List{
-			get {
+		public SortableBindingList<T> List
+        {
+			get 
+            {
 				return _List;
-
 			}
 		}
 		
 		
 		string _assemblyPath;
-		public string AssemblyPath {
-			get {
-				if (_assemblyPath == null) {
-					
+		public string AssemblyPath 
+        {
+			get 
+            {
+				if (_assemblyPath == null) 
+                {	
 					_assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				}
+
 				return _assemblyPath;
 			}
 		}

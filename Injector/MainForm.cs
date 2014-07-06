@@ -7,19 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
-using EasyHook;
-using System.Reflection;
-using System.Diagnostics;
-using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
-using System.Linq;
 using System.IO;
-using Library.Forms;
-using System.Threading;
-using System.Net;
 
 namespace Injector
 {
@@ -32,97 +21,179 @@ namespace Injector
 		
 		public MainForm()
 		{
-			//
-			// The InitializeComponent() call is required for Windows Forms designer support.
-			//
-			InitializeComponent();
-			
-			Cache.OnMessage += ThreadSafeAddlog;
+		    try
+		    {
+		        //
+		        // The InitializeComponent() call is required for Windows Forms designer support.
+		        //
+		        InitializeComponent();
+
+		        Cache.OnMessage += ThreadSafeAddlog;
+		    }
+		    catch (Exception ex)
+		    {
+		        Log("[MainForm] Exception [" + ex + "]");
+		    }
 		}
 		
-		public void ThreadSafeAddlog(string str){
-			
-			if(this.InvokeRequired){
-				this.Invoke( new Action(() => Log(str) ));
-				
-			} else {
-				Log(str);
-			}
+		public void ThreadSafeAddlog(string str)
+        {
+		    try
+		    {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action(() => Log(str)));
+
+                }
+                else
+                {
+                    Log(str);
+                }
+		    }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Log("[ThreadSafeAddlog] Exception [" + ex + "]");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("[ThreadSafeAddlog] Exception [" + ex + "]");
+                }
+            }
 		}
 		
 		
-		public void Log(string msg){
-			
-			logbox.DataSource = null;
-			if (logbox.Items.Count >= 1000)
-			{
-				logbox.Items.Clear();
-			}
-			
-			using (StreamWriter w = File.AppendText(Cache.Instance.AssemblyPath + "\\Injector.log"))
-			{
-				w.WriteLine(msg);
-			}
-			
-			logbox.Items.Add(msg);
-			logbox.SelectedIndex = logbox.Items.Count - 1;
+		public void Log(string msg)
+        {
+		    try
+		    {
+                logbox.DataSource = null;
+                if (logbox.Items.Count >= 1000)
+                {
+                    logbox.Items.Clear();
+                }
+
+                using (StreamWriter w = File.AppendText(Cache.Instance.AssemblyPath + "\\Injector.log"))
+                {
+                    try
+                    {
+                        w.WriteLine(msg);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("[Log w.writeline] Exception [" + ex + "]");
+                    }
+                    
+                }
+
+                logbox.Items.Add(msg);
+                logbox.SelectedIndex = logbox.Items.Count - 1;
+		    }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Log] Exception [" + ex + "]");
+            }
 		}
-		
-		
-		
 		
 		void MainFormLoad(object sender, EventArgs e)
 		{
-			dataGridEveAccounts.DataSource = Cache.Instance.EveAccountSerializeableSortableBindingList.List;
-			textBoxEveLocation.Text = Cache.Instance.EveSettings.EveDirectory;
-			
-			checkBoxEveServerStatusThread.Checked = Cache.Instance.EveSettings.EveServerStatusThread;
-			if(Cache.Instance.EveSettings.EveServerStatusThread) {
-				EveServerStatus.Instance.StartEveServerStatusThread();
-			}
-			
-			WCFServer.Instance.StartWCFServer();
-			
+		    try
+		    {
+		        if (Cache.Instance.EveAccountSerializeableSortableBindingList != null)
+		        {
+                    dataGridEveAccounts.DataSource = Cache.Instance.EveAccountSerializeableSortableBindingList.List;    
+		        }
+
+                if (Cache.Instance.EveSettings != null)
+                {
+                    if(Cache.Instance.EveSettings.EveDirectory != null && !string.IsNullOrEmpty(Cache.Instance.EveSettings.EveDirectory))
+		            {
+                        textBoxEveLocation.Text = Cache.Instance.EveSettings.EveDirectory;    
+		            }
+
+                    if (Cache.Instance.EveSettings.EveServerStatusThread != null)
+                    {
+                        checkBoxEveServerStatusThread.Checked = (bool)Cache.Instance.EveSettings.EveServerStatusThread;
+                        
+                        //
+                        // todo: seems like this should be located elsewhere
+                        //
+                        if ((bool)Cache.Instance.EveSettings.EveServerStatusThread)
+                        {
+                            EveServerStatus.Instance.StartEveServerStatusThread();
+                        }
+                    }
+                }
+                
+                WCFServer.Instance.StartWCFServer();
+		    }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Log("[MainFormLoad] Exception [" + ex + "]");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("[MainFormLoad] Exception [" + ex + "]");
+                }
+            }
 		}
 		
 		void MainFormFormClosed(object sender, FormClosedEventArgs e)
 		{
-			
 			EveManager.Instance.Dispose();
 			EveServerStatus.Instance.Dispose();
-			
 		}
 		
 		void EveLocationTextChanged(object sender, EventArgs e)
 		{
-			Cache.Instance.EveSettings.EveDirectory = textBoxEveLocation.Text;
+		    if (textBoxEveLocation.Text != null && textBoxEveLocation.Text.ToLower().EndsWith("exefile.exe"))
+		    {
+		        if (Cache.Instance.EveSettings != null)
+		        {
+                    Cache.Instance.EveSettings.EveDirectory = textBoxEveLocation.Text;    
+		        }
+		    }
 		}
-		
-		
 		
 		void DeleteToolStripMenuItem1Click(object sender, EventArgs e)
 		{
+		    try
+		    {
+                DataGridView dgv = this.ActiveControl as DataGridView;
+                if (dgv == null) return;
 
-			var dgv = this.ActiveControl as DataGridView;
-			if ( dgv == null) return;
-			int selected = dgv.SelectedCells[0].OwningRow.Index;
-			
-			if(selected >= 0){
-				Cache.Instance.EveAccountSerializeableSortableBindingList.List.RemoveAt(selected);
-				
-				dataGridEveAccounts.DataSource = Cache.Instance.EveAccountSerializeableSortableBindingList.List;
-				
-			}
+                int selected = dgv.SelectedCells[0].OwningRow.Index;
+
+                if (selected >= 0)
+                {
+                    Cache.Instance.EveAccountSerializeableSortableBindingList.List.RemoveAt(selected);
+                    dataGridEveAccounts.DataSource = Cache.Instance.EveAccountSerializeableSortableBindingList.List;
+                }
+		    }
+            catch (Exception ex)
+            {
+                Log("[DeleteToolStripMenuItem1Click] Exception [" + ex + "]");
+            }
 		}
 		
 		void StartInjectToolStripMenuItemClick(object sender, EventArgs e)
 		{
-			var dgv = this.ActiveControl as DataGridView;
-			if ( dgv == null) return;
-			int index = (dgv.SelectedCells[0].OwningRow.Index);
-			EveAccount eA = Cache.Instance.EveAccountSerializeableSortableBindingList.List[index];
-			eA.StartEveInject();
-			return;
+		    try
+		    {
+                DataGridView dgv = this.ActiveControl as DataGridView;
+                if (dgv == null) return;
+                int index = (dgv.SelectedCells[0].OwningRow.Index);
+                EveAccount eA = Cache.Instance.EveAccountSerializeableSortableBindingList.List[index];
+                eA.StartEveInject();
+                return;
+		    }
+            catch (Exception ex)
+            {
+                Log("[StartInjectToolStripMenuItemClick] Exception [" + ex + "]");
+            }
 		}
 		
 		void ButtonStartEveMangerClick(object sender, EventArgs e)
@@ -135,8 +206,6 @@ namespace Injector
 			EveManager.Instance.Dispose();
 		}
 		
-		
-		
 		void ButtonKillAllEveInstancesClick(object sender, EventArgs e)
 		{
 			EveManager.Instance.KillAllEveInstances();
@@ -144,13 +213,15 @@ namespace Injector
 		
 		void ButtonGenNewClick(object sender, System.EventArgs e)
 		{
-			foreach(EveAccount eA in Cache.Instance.EveAccountSerializeableSortableBindingList.List){
+			foreach(EveAccount eA in Cache.Instance.EveAccountSerializeableSortableBindingList.List)
+            {
 				eA.GenerateNewBeginEnd();
 			}
 		}
 		void ButtonGenNewBeginEndClick(object sender, System.EventArgs e)
 		{
-			foreach(EveAccount eA in Cache.Instance.EveAccountSerializeableSortableBindingList.List){
+			foreach(EveAccount eA in Cache.Instance.EveAccountSerializeableSortableBindingList.List)
+            {
 				eA.GenerateNewBeginEnd();
 			}
 		}
@@ -172,7 +243,6 @@ namespace Injector
 				this.Visible = false;
 				this.notifyIconQL.Visible = true;
 			}
-			
 		}
 		
 		void NotifyIconQLMouseDoubleClick(object sender, MouseEventArgs e)
@@ -180,32 +250,32 @@ namespace Injector
 			
 			((NotifyIcon)sender).Visible = !((NotifyIcon)sender).Visible;
 			this.Visible = !this.Visible;
-			WindowState = FormWindowState.Normal;
-			
+			WindowState = FormWindowState.Normal;	
 		}
 		
 		void CheckBoxEveServerStatusThreadCheckedChanged(object sender, EventArgs e)
 		{
 			Cache.Instance.EveSettings.EveServerStatusThread = ((CheckBox)sender).Checked;
 			
-			if(((CheckBox)sender).Checked) {
+			if(((CheckBox)sender).Checked) 
+            {
 				EveServerStatus.Instance.StartEveServerStatusThread();
-			} else {
+			} 
+            else 
+            {
 				EveServerStatus.Instance.Dispose();
 			}
 		}
 		
 		void EditAdapteveHWProfileToolStripMenuItemClick(object sender, EventArgs e)
 		{
-			
-			var dgv = this.ActiveControl as DataGridView;
+			DataGridView dgv = this.ActiveControl as DataGridView;
 			if ( dgv == null) return;
 			int index = (dgv.SelectedCells[0].OwningRow.Index);
 			EveAccount eA = Cache.Instance.EveAccountSerializeableSortableBindingList.List[index];
 			
 			var hwPf = new HWProfileForm(eA);
    			hwPf.Show();
-			
 		}
 	}
 }

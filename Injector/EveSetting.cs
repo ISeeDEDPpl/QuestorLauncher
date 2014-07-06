@@ -17,15 +17,21 @@ namespace Injector
 	/// </summary>
 	
 	[Serializable]
-	public class EveSetting : ViewModelBase {
-		
-
-		public EveSetting(string eveDirectory, string redGuardDirectory ,DateTime last24HourTS, bool eveServerStatusThread)
+	public class EveSetting : ViewModelBase 
+    {
+	    public EveSetting(string eveDirectory, string redGuardDirectory ,DateTime last24HourTS, bool eveServerStatusThread)
 		{
-			EveDirectory = eveDirectory;
-			RedGuardDirectory = redGuardDirectory;
-			Last24HourTS = last24HourTS;
-			EveServerStatusThread = eveServerStatusThread;
+	        try
+	        {
+                EveDirectory = eveDirectory;
+                RedGuardDirectory = redGuardDirectory;
+                Last24HourTS = last24HourTS;
+                EveServerStatusThread = eveServerStatusThread;
+	        }
+	        catch (Exception ex)
+	        {
+	            Console.WriteLine("[EveSetting] Exception [" + ex + "]");
+	        }
 		}
 		
 		public EveSetting()
@@ -45,7 +51,7 @@ namespace Injector
 
 	            return string.Empty;
 	        }
-	        private set
+	        set
 	        {
 	            _redGuardDirectory = value;
 	        }
@@ -81,16 +87,23 @@ namespace Injector
 	        }
 	    }
 
-	    public bool EveServerStatusThread
+
+	    public bool? _eveServerStatusThread;
+	    public bool? EveServerStatusThread
 	    {
-	        get
-	        {
-	            return GetValue( () => EveServerStatusThread );
-	        }
-	        set
-	        {
-	            SetValue( () => EveServerStatusThread, value );
-	        }
+            get
+            {
+                if (_eveServerStatusThread != null)
+                {
+                    return _eveServerStatusThread;
+                }
+
+                return null;
+            }
+            set
+            {
+                _eveServerStatusThread = value;
+            }
 	    }
 	}
 }

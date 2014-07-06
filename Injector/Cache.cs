@@ -8,24 +8,11 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using EasyHook;
 using System.Reflection;
-using System.Diagnostics;
-using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
 using System.Linq;
 using System.IO;
-using Library.Forms;
 using System.Threading;
 using Utility;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-
 
 namespace Injector
 {
@@ -39,53 +26,119 @@ namespace Injector
 		public delegate void Message(string msg);
 		public static event Message OnMessage;
 		
-		
 		public Cache()
 		{
 			Interlocked.Increment(ref CacheInstances);
 		}
-		
-		
-		public SerializeableSortableBindingList<EveAccount> EveAccountSerializeableSortableBindingList = new SerializeableSortableBindingList<EveAccount>("AcccountData.xml", 0);
+
+        private SerializeableSortableBindingList<EveAccount> _eveAccountSerializeableSortableBindingList;
+	    public SerializeableSortableBindingList<EveAccount> EveAccountSerializeableSortableBindingList
+	    {
+	        get
+	        {
+                _eveAccountSerializeableSortableBindingList = new SerializeableSortableBindingList<EveAccount>("AcccountData.xml", 0);
+
+	            if (_eveAccountSerializeableSortableBindingList != null)
+	            {
+	                return _eveAccountSerializeableSortableBindingList;
+	            }
+	            else
+	            {
+                    return null;
+	            }
+	        }
+	    } 
 		
 		private SerializeableSortableBindingList<EveSetting> eveSettingsSerializeableSortableBindingList = new SerializeableSortableBindingList<EveSetting>("EveSettings.xml", 0);
-		public EveSetting EveSettings { 
-			get {
-				if(!eveSettingsSerializeableSortableBindingList.List.Any())
-					eveSettingsSerializeableSortableBindingList.List.Add(new EveSetting("C:\\eveoffline\\bin\\exefile.exe", "C:\\redugard\\", DateTime.MinValue, true));
-				return (EveSetting)eveSettingsSerializeableSortableBindingList.List[0];
+
+	    private EveSetting _defaultEveSettings;
+        public EveSetting EveSettings 
+        {
+			get 
+            {
+                try
+                {
+                    _defaultEveSettings = new EveSetting("C:\\eveoffline\\bin\\exefile.exe", "C:\\redguard\\", DateTime.MinValue, true);
+
+                    if (eveSettingsSerializeableSortableBindingList == null)
+                    {
+                        return _defaultEveSettings;
+                    }
+
+                    if (eveSettingsSerializeableSortableBindingList.List == null)
+                    {
+                        return _defaultEveSettings;
+                    }
+
+                    if (eveSettingsSerializeableSortableBindingList != null && eveSettingsSerializeableSortableBindingList.List != null)
+                    {
+                        if (!eveSettingsSerializeableSortableBindingList.List.Any())
+                        {
+                            return _defaultEveSettings;
+                        }
+
+                        return (EveSetting)eveSettingsSerializeableSortableBindingList.List[0];
+                    }
+
+                    Log("[EveSettings] EveSettings is null");
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    Log("[EveSettings] Exception [" + ex + "]");
+                    return null;
+                }
 			}
 		}
 		
 		string _assemblyPath;
-		public string AssemblyPath{
-			get {
-				if (_assemblyPath == null) {
-					
+		public string AssemblyPath
+        {
+			get 
+            {
+				if (_assemblyPath == null) 
+                {	
 					_assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				}
+
 				return _assemblyPath;
 			}
 		}
 		
-		public string EveLocation {
-			get {
-				
-				return Cache.Instance.EveSettings.EveDirectory;
-			}
+		public string EveLocation 
+        {
+			get 
+            {
+                try
+                {
+                    if (Cache.Instance.EveSettings != null)
+                    {
+                        return Cache.Instance.EveSettings.EveDirectory;
+                    }
+
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    Log("[EveLocation] Exception [" + ex + "]");
+                    return null;
+                }
+            }
 		}
 		
 		public void Log(string text)
 		{
-			try {
+			try 
+            {
 				if (OnMessage != null)
 				{
 					OnMessage(DateTime.UtcNow.ToString() + " " + text.ToString());
 				}
-			} catch (Exception) {
+			} 
+            catch (Exception) 
+            {
 				
 			}
-			
 		}
 		
 		
