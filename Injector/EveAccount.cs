@@ -172,95 +172,103 @@ namespace Injector
 		
 		
 		public void StartEveInject()
-        {	
-			string[] args = new string[] {this.AccountName,this.CharacterName,this.Password,this.UseRedGuard.ToString(),this.HideHookManager.ToString(), this.UseAdaptEve.ToString(), WCFServer.Instance.GetPipeName};
-			this.Pid = 0;
-			int processId = -1;
-			
-			string assemblyFolder = Cache.Instance.AssemblyPath + "\\EveSettings\\";
-			string currentAppDataFolder = assemblyFolder + this.AccountName + "_AppData\\";
-			
-            string eveBasePath = Directory.GetParent(Directory.GetParent(Cache.Instance.EveLocation).ToString()).ToString();
+        {
+		    try
+		    {
+                string[] args = new string[] { this.AccountName, this.CharacterName, this.Password, this.UseRedGuard.ToString(), this.HideHookManager.ToString(), this.UseAdaptEve.ToString(), WCFServer.Instance.GetPipeName };
+                this.Pid = 0;
+                int processId = -1;
 
-			eveBasePath = eveBasePath.Replace(":\\","_");
-			eveBasePath = eveBasePath.Replace("\\","_").ToLower() + "_tranquility";
-			
-			string appDataCCPEveFolder = currentAppDataFolder + "CCP\\EVE\\";
-			string eveSettingFolder = currentAppDataFolder + "CCP\\EVE\\" + eveBasePath + "\\";
-			string defaultSettingsFolder = assemblyFolder + "default\\";
-			string eveCacheFolder = eveSettingFolder + "\\cache\\";
-			
-			try 
-            {	
-				foreach (string file in Directory.GetFiles(appDataCCPEveFolder, "*.crs").Where(item => item.EndsWith(".crs")))
-				{
-					File.Delete(file);
-				}
-				
-				foreach (string file in Directory.GetFiles(appDataCCPEveFolder, "*.dmp").Where(item => item.EndsWith(".dmp")))
-				{
-					File.Delete(file);
-				}
-				
-				if (Directory.Exists(eveCacheFolder)){
-					Directory.Delete(eveCacheFolder,true);
-				}
-				
-				if (Directory.Exists(assemblyFolder))
+                string assemblyFolder = Cache.Instance.AssemblyPath + "\\EveSettings\\";
+                string currentAppDataFolder = assemblyFolder + this.AccountName + "_AppData\\";
+
+                string eveBasePath = Directory.GetParent(Directory.GetParent(Cache.Instance.EveLocation).ToString()).ToString();
+
+                eveBasePath = eveBasePath.Replace(":\\", "_");
+                eveBasePath = eveBasePath.Replace("\\", "_").ToLower() + "_tranquility";
+
+                string appDataCCPEveFolder = currentAppDataFolder + "CCP\\EVE\\";
+                string eveSettingFolder = currentAppDataFolder + "CCP\\EVE\\" + eveBasePath + "\\";
+                string defaultSettingsFolder = assemblyFolder + "default\\";
+                string eveCacheFolder = eveSettingFolder + "\\cache\\";
+
+                try
                 {
-					foreach(String d in Directory.GetDirectories(assemblyFolder))
+                    foreach (string file in Directory.GetFiles(appDataCCPEveFolder, "*.crs").Where(item => item.EndsWith(".crs")))
                     {
-						string directoryName = new DirectoryInfo(d).Name;
-						if(!Cache.Instance.EveAccountSerializeableSortableBindingList.List.Any(s => directoryName.Contains(s.AccountName)) && !directoryName.Equals("default")) 
+                        File.Delete(file);
+                    }
+
+                    foreach (string file in Directory.GetFiles(appDataCCPEveFolder, "*.dmp").Where(item => item.EndsWith(".dmp")))
+                    {
+                        File.Delete(file);
+                    }
+
+                    if (Directory.Exists(eveCacheFolder))
+                    {
+                        Directory.Delete(eveCacheFolder, true);
+                    }
+
+                    if (Directory.Exists(assemblyFolder))
+                    {
+                        foreach (String d in Directory.GetDirectories(assemblyFolder))
                         {
-							Cache.Instance.Log("[EveAccount] Deleting not used Folder: EveSettings\\" + directoryName);
-							Directory.Delete(d,true);
-						}
-					}
-				}
-				
-			} 
-            catch (Exception) 
+                            string directoryName = new DirectoryInfo(d).Name;
+                            if (!Cache.Instance.EveAccountSerializeableSortableBindingList.List.Any(s => directoryName.Contains(s.AccountName)) && !directoryName.Equals("default"))
+                            {
+                                Cache.Instance.Log("[EveAccount] Deleting not used Folder: EveSettings\\" + directoryName);
+                                Directory.Delete(d, true);
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Cache.Instance.Log("[EveAccount] Couldn't clear the cache || Deleting *.crs // *. dmp files: Exception [" + ex + "]");
+                }
+
+                if (!Directory.Exists(eveSettingFolder))
+                {
+                    Utility.Utility.DirectoryCopy(defaultSettingsFolder, eveSettingFolder, true);
+                    Cache.Instance.Log("[EveAccount] EveSettingsFolder doesn't exists. copying default settings");
+                }
+                else
+                {
+                    Cache.Instance.Log("[EveAccount] EveSettingsFolder already exists. not copying default settings");
+                }
+
+                string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string injectionFile = System.IO.Path.Combine(path, "AppDomainHandler.dll");
+                String ChannelName = null;
+                RemoteHooking.IpcCreateServer<QuestorLauncherInterface.QuestorLauncherInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
+
+                EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, "\"/triPlatform=dx9\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
+
+                bool redGuardDone = true;
+                if (this.UseRedGuard)
+                {
+                    redGuardDone = false;
+                    redGuardDone = RedGuard.Instance.DoRedguard(this.AccountName);
+                }
+
+                this.StartsPast24H++;
+
+                if (processId != -1 && processId != 0 && redGuardDone)
+                {
+                    this.Pid = processId;
+                    this.LastStartTime = DateTime.UtcNow;
+                }
+                else
+                {
+                    Cache.Instance.Log("[EveAccount] processId == -1 || processId == 0 || !redGuardDone!");
+                    //				this.IsActive = false;
+                }
+		    }
+            catch (Exception ex)
             {
-				Cache.Instance.Log("[EveAccount] Couldn't clear the cache || Deleting *.crs // *. dmp files");
-			}
-			
-			if (!Directory.Exists(eveSettingFolder)) 
-            {
-				Utility.Utility.DirectoryCopy(defaultSettingsFolder,eveSettingFolder,true);
-				Cache.Instance.Log("[EveAccount] EveSettingsFolder doesn't exists. copying default settings");
-			} 
-            else 
-            {
-				Cache.Instance.Log("[EveAccount] EveSettingsFolder already exists. not copying default settings");
-			}
-			
-			string path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			string injectionFile = System.IO.Path.Combine(path, "AppDomainHandler.dll");
-			String ChannelName = null;
-			RemoteHooking.IpcCreateServer<QuestorLauncherInterface.QuestorLauncherInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
-			
-			EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, "\"/triPlatform=dx9\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
-			
-			bool redGuardDone = true;
-			if (this.UseRedGuard)
-            {
-				redGuardDone = false;
-				redGuardDone = RedGuard.Instance.DoRedguard(this.AccountName);
-			}
-			
-			this.StartsPast24H++;
-			
-			if (processId != -1 && processId != 0 && redGuardDone) 
-            {
-				this.Pid = processId;
-				this.LastStartTime = DateTime.UtcNow;
-			} 
-            else 
-            {
-				Cache.Instance.Log("[EveAccount] processId == -1 || processId == 0 || !redGuardDone!");
-				//				this.IsActive = false;
-			}
+                Cache.Instance.Log("[StartEveInject] Exception [" + ex + "]");
+            }
 		}
 	}
 }

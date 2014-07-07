@@ -7,13 +7,8 @@
  * ---------------------------------------
  */
 using System;
-using HtmlAgilityPack;
-using SeasideResearch.LibCurlNet;
-using System.Windows.Forms;
-using System.Web;
 using System.Collections.Generic;
 using System.Threading;
-using System.IO;
 
 namespace Injector
 {

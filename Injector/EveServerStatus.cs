@@ -60,12 +60,14 @@ namespace Injector
 		
 		public void StartEveServerStatusThread()
         {
+            /*
 			Cache.Instance.Log("Starting EveServerStatus Thread.");
 			if(eveServerStatusThread == null || !eveServerStatusThread.IsAlive)
             {
 				eveServerStatusThread = new Thread(GetEveServerStatusThread);
 				eveServerStatusThread.Start();
 			}
+            */
 		}
 		
 		

@@ -54,9 +54,6 @@
     <Reference Include="EasyHook">
       <HintPath>..\Libs\EasyHook.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\Libs\HtmlAgilityPack.dll</HintPath>
-    </Reference>
     <Reference Include="LibCurlNet">
       <HintPath>..\Libs\LibCurlNet.dll</HintPath>
     </Reference>
