@@ -11,7 +11,7 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of CurlManager.
@@ -31,7 +31,7 @@ namespace Injector
         {
 			get 
             {
-				if(DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme)
+				if (DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute <= randomWaitTme)
                 {
 					
 					return false;
@@ -90,13 +90,11 @@ namespace Injector
 							{
 								try 
                                 {
-									if(reader.Name.Equals("serverOpen"))
+									if (reader.Name.Equals("serverOpen"))
                                     {
 										string innerValue = reader.ReadString();
-										if(!string.IsNullOrEmpty(innerValue)) 
+										if (!string.IsNullOrEmpty(innerValue)) 
                                         {
-											
-											
 											bool srvOpen = bool.Parse(innerValue);
 											if(srvOpen)
                                             {
@@ -108,9 +106,8 @@ namespace Injector
 									if(reader.Name.Equals("cachedUntil"))
                                     {
 										string innerValue = reader.ReadString();
-										if(!string.IsNullOrEmpty(innerValue))
+										if (!string.IsNullOrEmpty(innerValue))
                                         {
-											
 											DateTime dt = DateTime.Parse(innerValue);
 											if(dt > DateTime.UtcNow)
                                             {
@@ -118,9 +115,7 @@ namespace Injector
 												nextEveServerStatusCheck = dt.AddSeconds(10);
 											}
 										}
-									
 									}
-									
 								} 
                                 catch (Exception e) 
                                 {
@@ -144,7 +139,7 @@ namespace Injector
 		
 		public void Dispose()
         {	
-			if(eveServerStatusThread != null)
+			if (eveServerStatusThread != null)
             {
 				while(eveServerStatusThread.IsAlive)
                 {

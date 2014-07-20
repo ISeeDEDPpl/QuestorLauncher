@@ -10,7 +10,7 @@
 using System;
 using Utility;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of EveAccountData.
@@ -19,11 +19,11 @@ namespace Injector
 	[Serializable]
 	public class EveSetting : ViewModelBase 
     {
-	    public EveSetting(string eveDirectory, string redGuardDirectory ,DateTime last24HourTS, bool eveServerStatusThread)
+	    public EveSetting(string exeFileLocation, string redGuardDirectory ,DateTime last24HourTS, bool eveServerStatusThread)
 		{
 	        try
 	        {
-                EveDirectory = eveDirectory;
+                EXEFileLocation = exeFileLocation;
                 RedGuardDirectory = redGuardDirectory;
                 Last24HourTS = last24HourTS;
                 EveServerStatusThread = eveServerStatusThread;
@@ -57,21 +57,21 @@ namespace Injector
 	        }
 	    }
 
-	    private string _eveDirectory;
-		public string EveDirectory 
+        private string _exeFileLocation;
+		public string EXEFileLocation 
         {
             get
             {
-                if (string.IsNullOrEmpty(_eveDirectory))
+                if (string.IsNullOrEmpty(_exeFileLocation))
                 {
-                    return _eveDirectory;
+                    return _exeFileLocation;
                 }
 
                 return string.Empty;
             }
 		    set
             {
-                _eveDirectory = value;
+                _exeFileLocation = value;
             }
         }
 

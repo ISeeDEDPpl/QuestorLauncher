@@ -6,23 +6,17 @@
  * 
  * ---------------------------------------
  */
-using System;
-using EasyHook;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Linq;
-using System.IO;
-using System.Reflection;
-using System.Collections.Generic;
-using HookManager;
 
-namespace Win32Hooks
+using System;
+using System.Runtime.InteropServices;
+using EasyHook;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IsDebuggerPresent.
 	/// </summary>
 	/// 
-	
 	
 	public class GetModuleHandleAController : IHook, IDisposable
 	{
@@ -38,49 +32,53 @@ namespace Win32Hooks
 		
 		public GetModuleHandleAController()
 		{
-			this.Error = false;
-			this.Name = typeof(GetModuleHandleAController).Name;
-			
-			try {
-				this._hook = LocalHook.Create(
+			Error = false;
+			Name = typeof(GetModuleHandleAController).Name;
+			try 
+            {
+				_hook = LocalHook.Create(
 					LocalHook.GetProcAddress("Kernel32.dll", "GetModuleHandleA"),
-					new Win32Hooks.GetModuleHandleAController.GetModuleHandleADelegate(GetModuleHandleADetour),
+					new global::HookManager.Win32Hooks.GetModuleHandleAController.GetModuleHandleADelegate(GetModuleHandleADetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				this.Error = false;
-			} catch (Exception) {
-				this.Error = true;
-				
+				Error = false;
+			} 
+            catch (Exception)
+            {
+				Error = true;
 			}
 		}
 		
 		private IntPtr GetModuleHandleADetour(IntPtr lpModuleName)
 		{
-			try {
+			try 
+            {
 				string lpModName = Marshal.PtrToStringAnsi(lpModuleName);
-				if (lpModName != null && lpModName != ""){
-					if(HookManager.NeedsToBeCloaked(lpModName)) {
-						HookManager.Log("[GetModuleHandleADetour] Found & cloaked: " + lpModName);
+				if (!string.IsNullOrEmpty(lpModName))
+                {
+					if(global::HookManager.Win32Hooks.HookManager.NeedsToBeCloaked(lpModName)) 
+                    {
+						global::HookManager.Win32Hooks.HookManager.Log("[GetModuleHandleADetour] Found & cloaked: " + lpModName);
 						return IntPtr.Zero;
-					} else {
-						if(!HookManager.IsWhiteListedFileName(lpModName)) HookManager.Log("[GetModuleHandleADetour] File wasn't found in QuestorManager-Directory - not claoking: " + lpModName);
-						return GetModuleHandleA(lpModuleName);
-					}
+					} 
+                    
+                    if(!global::HookManager.Win32Hooks.HookManager.IsWhiteListedFileName(lpModName)) global::HookManager.Win32Hooks.HookManager.Log("[GetModuleHandleADetour] File wasn't found in QuestorManager-Directory - not claoking: " + lpModName);
+					return GetModuleHandleA(lpModuleName);
 				}
+
 				return GetModuleHandleA(lpModuleName);
 				
-			} catch (Exception) {
+			}
+            catch (Exception) 
+            {
 				return IntPtr.Zero;
 			}
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			_hook.Dispose();
 		}
-		
-		
-		
 	}
 }

@@ -9,7 +9,7 @@
 using System;
 using System.Linq;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of Driver.

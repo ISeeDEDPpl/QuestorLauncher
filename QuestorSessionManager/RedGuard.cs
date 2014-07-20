@@ -25,7 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of RedGuard.

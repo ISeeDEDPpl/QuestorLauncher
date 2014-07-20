@@ -10,7 +10,7 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Utility;
-using Injector;
+using QuestorSessionManager;
 using System.IO;
 
 namespace HookManager

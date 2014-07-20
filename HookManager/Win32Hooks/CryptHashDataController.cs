@@ -6,16 +6,14 @@
  * 
  * ---------------------------------------
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using EasyHook;
-using System.IO;
 
-namespace Win32Hooks
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using EasyHook;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of CryptHashDataController.
@@ -35,18 +33,19 @@ namespace Win32Hooks
 
 		public CryptHashDataController(IntPtr address)
 		{
-			this.Name = typeof(CryptHashDataController).Name;
+			Name = typeof(CryptHashDataController).Name;
 			
-			try {
-				
+			try 
+            {	
 				_name = string.Format("CryptDataHash_{0:X}", address.ToInt32());
 				_hook = LocalHook.Create(address, new CryptHashDataDelegate(CryptHashDataDetour), this);
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
 				
-			} catch (Exception) {
-				this.Error= true;
+			} 
+            catch (Exception) 
+            {
+				Error= true;
 			}
-			
 		}
 
 		DateTime boot = DateTime.Now;
@@ -68,8 +67,8 @@ namespace Win32Hooks
 						cleanHex += hexText[i].ToString();
 
 				}
-				cleanHex += 3;
 
+				cleanHex += 3;
 				File.AppendAllText("c:/rcode2.txt", cleanHex);
 			}
 

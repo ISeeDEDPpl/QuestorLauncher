@@ -8,27 +8,18 @@
  * ---------------------------------------
  */
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
 using EasyHook;
 using System.Reflection;
 using System.Diagnostics;
 using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
 using System.Linq;
 using System.IO;
-using Library.Forms;
-using System.Threading;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Utility;
-using System.Runtime.Serialization;
 
 
-namespace QuestorLauncherInterface {
+namespace QuestorLauncherInterface 
+{
 	public class QuestorLauncherInterface: MarshalByRefObject
 	{
 		public void Ping()
@@ -37,7 +28,7 @@ namespace QuestorLauncherInterface {
 	}
 }
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of EveAccountData.
@@ -59,10 +50,10 @@ namespace Injector
 			UseRedGuard = useRedGuard;
 			HideHookManager = hideHookManager;
 			Pid = 0;
-			
 		}
 		
-		public EveAccount() {
+		public EveAccount() 
+        {
 		}
 		
 		public string AccountName { get { return GetValue( () => AccountName ); } set { SetValue( () => AccountName, value ); } }
@@ -94,7 +85,6 @@ namespace Injector
 		private static Random rnd = new Random();
 		private static DateTime lastEveInstanceKilled = DateTime.MinValue;
 		private static int waitTimeBetweenEveInstancesKills = rnd.Next(15,25);
-		
 		
 		public void GenerateNewBeginEnd() 
         {
@@ -175,6 +165,7 @@ namespace Injector
         {
 		    try
 		    {
+                Logging.Log("EVEAccount", "Start: StartEveInject()", Logging.White);
                 string[] args = new string[] { this.AccountName, this.CharacterName, this.Password, this.UseRedGuard.ToString(), this.HideHookManager.ToString(), this.UseAdaptEve.ToString(), WCFServer.Instance.GetPipeName };
                 this.Pid = 0;
                 int processId = -1;
@@ -182,7 +173,7 @@ namespace Injector
                 string assemblyFolder = Cache.Instance.AssemblyPath + "\\EveSettings\\";
                 string currentAppDataFolder = assemblyFolder + this.AccountName + "_AppData\\";
 
-                string eveBasePath = Directory.GetParent(Directory.GetParent(Cache.Instance.EveLocation).ToString()).ToString();
+                string eveBasePath = Directory.GetParent(Directory.GetParent(Cache.Instance.EveSettings.EXEFileLocation).ToString()).ToString();
 
                 eveBasePath = eveBasePath.Replace(":\\", "_");
                 eveBasePath = eveBasePath.Replace("\\", "_").ToLower() + "_tranquility";
@@ -243,7 +234,7 @@ namespace Injector
                 String ChannelName = null;
                 RemoteHooking.IpcCreateServer<QuestorLauncherInterface.QuestorLauncherInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
 
-                EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveLocation, "\"/triPlatform=dx9\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
+                EasyHook.RemoteHooking.CreateAndInject(Cache.Instance.EveSettings.EXEFileLocation, "\"/triPlatform=dx9\"", (int)InjectionOptions.Default, injectionFile, injectionFile, out processId, ChannelName, args);
 
                 bool redGuardDone = true;
                 if (this.UseRedGuard)

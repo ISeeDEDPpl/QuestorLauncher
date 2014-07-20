@@ -7,24 +7,19 @@
  * ---------------------------------------
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
-using EasyHook;
-using System.Text.RegularExpressions;
 using System.Collections;
 using System.IO;
+using QuestorSessionManager;
 
 namespace HookManager
 {
 	/// <summary>
-	/// Description of Enviroment.
+	/// Description of Environment.
 	/// </summary>
 	public class EnvVars
 	{
-		public static void SetEnvironment(Injector.HWSettings settings)
+		public static void SetEnvironment(HWSettings settings)
 		{
 			IntPtr myUsernamePointer = getenv("USERNAME");
 			string myUsername = Marshal.PtrToStringAnsi(myUsernamePointer);

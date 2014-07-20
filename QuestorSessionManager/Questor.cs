@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of Questor.
@@ -36,7 +36,7 @@ namespace Injector
 		public void DownloadQuestor() {
 			
 //			string qLink =  "https://github.com/duketwo/Questor/archive/BleedingEdge.zip";
-			string qLink = "https://github.com/ISeeDEDPpl/Questor/archive/BleedingEdge.zip";
+			const string qLink = "https://github.com/ISeeDEDPpl/Questor/archive/BleedingEdge.zip";
 			
 			Cache.Instance.Log("Downloading Questor from: " + qLink);
 			

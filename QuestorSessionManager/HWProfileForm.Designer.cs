@@ -6,7 +6,7 @@
  * 
  * ---------------------------------------
  */
-namespace Injector
+namespace QuestorSessionManager
 {
 	partial class HWProfileForm
 	{

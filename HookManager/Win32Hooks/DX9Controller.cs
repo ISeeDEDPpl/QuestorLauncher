@@ -6,17 +6,15 @@
  * 
  * ---------------------------------------
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using EasyHook;
-using System.Windows.Forms;
-using System.Drawing;
 
-namespace Win32Hooks
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using EasyHook;
+using QuestorSessionManager;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of DX9Controller.
@@ -32,48 +30,47 @@ namespace Win32Hooks
 
 		private string _name;
 		private LocalHook _hook;
-		private Injector.HWSettings _settings;
+		private HWSettings _settings;
 		public bool Error { get; set; }
 		public string Name  { get; set; }
 
-		public DX9Controller(Injector.HWSettings settings)
+		public DX9Controller(HWSettings settings)
 		{
-			this._settings = settings;
-			this.Name = typeof(DX9Controller).Name;
+			_settings = settings;
+			Name = typeof(DX9Controller).Name;
 			IntPtr direct3D = Direct3DCreate9(32);
 			
 			
-			try {
-				if (direct3D == IntPtr.Zero){
+			try 
+            {
+				if (direct3D == IntPtr.Zero)
+                {
 					MessageBox.Show("error");
 					throw new Exception("Failed to create D3D.");
 				}
 
 				IntPtr adapterIdentPtr = Marshal.ReadIntPtr(Marshal.ReadIntPtr(direct3D), 20);
-
 				GetAdapterIdentifierOriginal = (GetAdapterIdentifierDelegate)Marshal.GetDelegateForFunctionPointer(adapterIdentPtr, typeof(GetAdapterIdentifierDelegate));
-
 				_name = string.Format("GetAdapterIdentHook_{0:X}", adapterIdentPtr.ToInt32());
 				_hook = LocalHook.Create(adapterIdentPtr, new GetAdapterIdentifierDelegate(GetAdapterIdentifierDetour), this);
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
 				
-			} catch (Exception ex) {
-				
-				HookManager.Log("[DX9Controller] Exception: " + ex.ToString());
-				this.Error = true;
+			}
+            catch (Exception ex)
+            {	
+				global::HookManager.Win32Hooks.HookManager.Log("[DX9Controller] Exception: " + ex.ToString());
+				Error = true;
 			}
 		}
 
 		private UInt32 GetAdapterIdentifierDetour(UInt32 Adapter, UInt64 Flags, [In][Out] IntPtr pIdentifier)
-		{
-			
-			var result = GetAdapterIdentifierOriginal(Adapter, Flags, pIdentifier);
-			
+		{			
+			uint result = GetAdapterIdentifierOriginal(Adapter, Flags, pIdentifier);
 			
 			D3DADAPTER_IDENTIFIER9 newStructBefore = (D3DADAPTER_IDENTIFIER9)Marshal.PtrToStructure(pIdentifier, typeof(D3DADAPTER_IDENTIFIER9));
 			string before = string.Format("[DX9Controller] Before: Description: {0} GpuDeviceId: {1} GpuIdentifier: {2} GpuDriverversion: {3} GpuRevision: {4} GpuVendorId: {5}",
 			                              newStructBefore.Description,newStructBefore.DeviceId.ToString(), newStructBefore.DeviceIdentifier.ToString(), ((long)newStructBefore.DriverVersion.QuadPart).ToString(), newStructBefore.Revision.ToString(), newStructBefore.VendorId.ToString(), Color.Orange);
-			HookManager.Log(before, Color.Orange);
+			global::HookManager.Win32Hooks.HookManager.Log(before, Color.Orange);
 		
 			newStructBefore.Description = _settings.GpuDescription;
 			newStructBefore.DeviceId = _settings.GpuDeviceId;
@@ -89,9 +86,10 @@ namespace Win32Hooks
 			
 			string after = string.Format("[DX9Controller] After: Description: {0} GpuDeviceId: {1} GpuIdentifier: {2} GpuDriverversion: {3} GpuRevision: {4} GpuVendorId: {5}",
 			                             newStructAfter.Description,newStructAfter.DeviceId.ToString(), newStructAfter.DeviceIdentifier.ToString(), ((long)newStructAfter.DriverVersion.QuadPart).ToString(), newStructAfter.Revision.ToString(), newStructAfter.VendorId.ToString(), Color.Orange);
-			HookManager.Log(after, Color.Orange);
+			global::HookManager.Win32Hooks.HookManager.Log(after, Color.Orange);
 			return 0; // D3D_OK
 		}
+
 		[StructLayout(LayoutKind.Sequential)]
 		public struct _GUID
 		{

@@ -6,17 +6,13 @@
  * 
  * ---------------------------------------
  */
-using System;
-using EasyHook;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using Utility;
-using System.Drawing;
 
-namespace Win32Hooks
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using EasyHook;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of RegistryController.
@@ -42,25 +38,24 @@ namespace Win32Hooks
 			_prodKey = prodKey;
 			this.Name = typeof(RegQueryValueExAController).Name;
 			
-			try {
-				
+			try 
+            {	
 				_name = string.Format("RegQueryValueExAHook_{0:X}", address.ToInt32());
 				_hook = LocalHook.Create(address, new RegQueryValueExADelegate(RegQueryValueExADetour), this);
-				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				
-			} catch (Exception) {
-				
-				this.Error = true;
+				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });	
+			} 
+            catch (Exception)
+            {	
+				Error = true;
 			}
-			
 		}
 
 		private int RegQueryValueExADetour(UIntPtr hKey, IntPtr lpValueName, int lpReserved, IntPtr lpType, IntPtr lpData, IntPtr lpcbData)
 		{
-			var result = RegQueryValueExA(hKey, lpValueName, lpReserved, lpType, lpData, lpcbData);
+			int result = RegQueryValueExA(hKey, lpValueName, lpReserved, lpType, lpData, lpcbData);
 
-			var keyValue = Marshal.PtrToStringAnsi(lpValueName);
-			var lpDataString = Marshal.PtrToStringAnsi(lpData);
+			string keyValue = Marshal.PtrToStringAnsi(lpValueName);
+			string lpDataString = Marshal.PtrToStringAnsi(lpData);
 			bool log = false;
 			if (keyValue == "ProductId")
 			{
@@ -79,11 +74,14 @@ namespace Win32Hooks
 						Marshal.FreeHGlobal(newValue);
 				}
 			}
-			var lpDataStringAfter = Marshal.PtrToStringAnsi(lpData);
-			if(log){
-				HookManager.Log("[RegQueryValueExADetour] Before: " + lpDataString.ToString(), Color.Orange);
-				HookManager.Log("[RegQueryValueExADetour] After: " + lpDataStringAfter.ToString(), Color.Orange);
+
+			string lpDataStringAfter = Marshal.PtrToStringAnsi(lpData);
+			if (log)
+            {
+				global::HookManager.Win32Hooks.HookManager.Log("[RegQueryValueExADetour] Before: " + lpDataString.ToString(), Color.Orange);
+				global::HookManager.Win32Hooks.HookManager.Log("[RegQueryValueExADetour] After: " + lpDataStringAfter.ToString(), Color.Orange);
 			}
+
 			return result;
 		}
 
@@ -96,5 +94,4 @@ namespace Win32Hooks
 			_hook = null;
 		}
 	}
-	
 }

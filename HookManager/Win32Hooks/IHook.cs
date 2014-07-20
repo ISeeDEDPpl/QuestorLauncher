@@ -6,9 +6,10 @@
  * 
  * ---------------------------------------
  */
+
 using System;
 
-namespace Win32Hooks
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IHook.

@@ -6,18 +6,13 @@
  * 
  * ---------------------------------------
  */
-using System;
-using EasyHook;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Linq;
-using System.IO;
-using System.Reflection;
-using System.Collections.Generic;
-using HookManager;
-using System.Text;
 
-namespace Win32Hooks
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using EasyHook;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of SHGetFolderPathWController.
@@ -41,55 +36,54 @@ namespace Win32Hooks
 		
 		public SHGetFolderPathAController()
 		{
-			
-			this.Error = false;
-			this.Name = typeof(SHGetFolderPathAController).Name;
-			try {
-				this._hook = LocalHook.Create(
+			Error = false;
+			Name = typeof(SHGetFolderPathAController).Name;
+			try 
+            {
+				_hook = LocalHook.Create(
 					LocalHook.GetProcAddress("shell32.dll", "SHGetFolderPathA"),
-					new Win32Hooks.SHGetFolderPathAController.SHGetFolderPathADelegate(SHGetFolderPathADetour),
+					new global::HookManager.Win32Hooks.SHGetFolderPathAController.SHGetFolderPathADelegate(SHGetFolderPathADetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				this.Error = false;
-			} catch (Exception) {
-				this.Error = true;
-				
+				Error = false;
+			}
+            catch (Exception)
+            {
+				Error = true;	
 			}
 		}
 		
-		
-		private static int SHGetFolderPathADetour(IntPtr hwndOwner, int nFolder, IntPtr hToken,
-		                                          UInt32 dwFlags, [In] [Out] IntPtr pszPath)
+		private static int SHGetFolderPathADetour(IntPtr hwndOwner, int nFolder, IntPtr hToken, UInt32 dwFlags, [In] [Out] IntPtr pszPath)
 		{
 			int ret = SHGetFolderPathA(hwndOwner,nFolder,hToken,dwFlags,pszPath);
-			if(nFolder == 0x0005 && Win32Hooks.HookManager.Instance.newPathPersonal != null){ // PERSONAL
-				
-				
-				string str = Win32Hooks.HookManager.Instance.newPathPersonal  + Char.MinValue;
+            if (nFolder == 0x0005 && global::HookManager.Win32Hooks.HookManager.Instance.newPathPersonal != null) // PERSONAL
+            { 
+				string str = global::HookManager.Win32Hooks.HookManager.Instance.newPathPersonal  + Char.MinValue;
 				byte[] buffer = ASCIIEncoding.ASCII.GetBytes(str);
-				for(int i =0; i<buffer.Length; i++){
+				for(int i =0; i<buffer.Length; i++)
+                {
 					Marshal.WriteByte(pszPath,i,buffer[i]);
 				}
 			}
-			
-			if(nFolder == 0x001c && Win32Hooks.HookManager.Instance.newPathLocalAppData != null) { // LOCAL APP DATA
 
-				string str = Win32Hooks.HookManager.Instance.newPathLocalAppData  + Char.MinValue;
+            if (nFolder == 0x001c && global::HookManager.Win32Hooks.HookManager.Instance.newPathLocalAppData != null) // LOCAL APP DATA
+            {
+				string str = global::HookManager.Win32Hooks.HookManager.Instance.newPathLocalAppData  + Char.MinValue;
 				byte[] buffer = ASCIIEncoding.ASCII.GetBytes(str);
-				for(int i =0; i<buffer.Length; i++){
+				for(int i =0; i<buffer.Length; i++)
+                {
 					Marshal.WriteByte(pszPath,i,buffer[i]);
 				}
 			}
+
 			return ret;
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			_hook.Dispose();
-		}
-		
-		
+		}	
 	}
 }
 

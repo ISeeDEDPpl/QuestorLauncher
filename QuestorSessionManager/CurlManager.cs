@@ -21,7 +21,7 @@ using Library.Forms;
 using System.Threading;
 using SeasideResearch.LibCurlNet;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of CurlManager.
@@ -40,8 +40,9 @@ namespace Injector
 		}
 		
 		private string CurrentPage { get; set; }
-		private string UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0";
-		private Int32 WriteData(Byte[] buf, Int32 size, Int32 nmemb, Object extraData)
+	    private const string UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0";
+
+	    private Int32 WriteData(Byte[] buf, Int32 size, Int32 nmemb, Object extraData)
 		{
 			lock(thisLock){
 				foreach (byte b in buf)
@@ -85,14 +86,14 @@ namespace Injector
 
 
                     }
-                    catch (Exception exp)
+                    catch (Exception ex)
                     {
-                        if (exp is ThreadAbortException)
+                        if (ex is ThreadAbortException)
                         {
                             this.CurrentPage = string.Empty;
                         }
                         
-                        Cache.Instance.Log("[GetPostPage] Exception " + exp.ToString());
+                        Cache.Instance.Log("[GetPostPage] Exception using curl: [" + ex + "]");
                     }
                     finally
                     {
@@ -112,7 +113,7 @@ namespace Injector
                     this.CurrentPage = string.Empty;
                 }
 
-                Cache.Instance.Log("[GetPostPage] Exception " + exp.ToString());
+                Cache.Instance.Log("[GetPostPage] Exception loading curl: [" + exp + "]");
             }
             finally
             {

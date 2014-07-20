@@ -16,15 +16,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of WCF.
 	/// </summary>
 	/// 
 	
-	[ServiceKnownType(typeof(Injector.EveAccount))]
-	[ServiceKnownType(typeof(Injector.HWSettings))]
+	[ServiceKnownType(typeof(QuestorSessionManager.EveAccount))]
+	[ServiceKnownType(typeof(QuestorSessionManager.HWSettings))]
 	[ServiceContract]
 	public interface IWCFMethods
 	{
@@ -38,8 +38,8 @@ namespace Injector
 		List<EveAccount> GetEveAccountList();
 		
 	}
-	[KnownType(typeof(Injector.EveAccount))]
-	[KnownType(typeof(Injector.HWSettings))]
+	[KnownType(typeof(QuestorSessionManager.EveAccount))]
+	[KnownType(typeof(QuestorSessionManager.HWSettings))]
 	public class WCFMethods : IWCFMethods
 	{
 		public WCFMethods()

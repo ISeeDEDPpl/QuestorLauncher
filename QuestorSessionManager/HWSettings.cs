@@ -10,7 +10,7 @@ using System;
 using Utility;
 using System.Linq;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of HWSettings.

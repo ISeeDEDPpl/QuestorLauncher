@@ -6,19 +6,17 @@
  * 
  * ---------------------------------------
  */
+
 using System;
-using EasyHook;
 using System.Runtime.InteropServices;
-using HookManager;
+using EasyHook;
 
-
-namespace Win32Hooks
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IsDebuggerPresent.
 	/// </summary>
 	/// 
-	
 	
 	public class MiniWriteDumpController : IHook, IDisposable
 	{
@@ -34,24 +32,27 @@ namespace Win32Hooks
 		
 		public MiniWriteDumpController()
 		{
-			this.Error = false;
-			this.Name = typeof(MiniWriteDumpController).Name;
+			Error = false;
+			Name = typeof(MiniWriteDumpController).Name;
 			IntPtr ptr = IntPtr.Zero;
-			while(ptr == IntPtr.Zero){
+			while(ptr == IntPtr.Zero)
+            {
 				ptr = LoadLibrary("DbgHelp.dll");
 			}
 			
-			try {
-				this._hook = LocalHook.Create(
+			try 
+            {
+				_hook = LocalHook.Create(
 					LocalHook.GetProcAddress("DbgHelp.dll", "MiniDumpWriteDump"),
-					new Win32Hooks.MiniWriteDumpController.MiniDumpWriteDumpDelegate(MiniDumpWriteDumpDetour),
+					new global::HookManager.Win32Hooks.MiniWriteDumpController.MiniDumpWriteDumpDelegate(MiniDumpWriteDumpDetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				this.Error = false;
-			} catch (Exception) {
-				this.Error = true;
-				
+				Error = false;
+			}
+            catch (Exception)
+            {
+				Error = true;	
 			}
 		}
 		
@@ -61,12 +62,9 @@ namespace Win32Hooks
 			return false;
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			_hook.Dispose();
 		}
-		
-		
-		
 	}
 }

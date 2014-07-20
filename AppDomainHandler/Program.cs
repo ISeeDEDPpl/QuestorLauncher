@@ -9,14 +9,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using EasyHook;
 using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Diagnostics;
 
 namespace QuestorLauncherInterface
 {
@@ -62,14 +59,16 @@ namespace QuestorManager
 			string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			hookManagerDomain.ExecuteAssembly(assemblyFolder + "\\HookManager.exe", args: args);
 			
-			try {
-				
-				while (true) {
+			try 
+            {	
+				while (true) 
+                {
 					Thread.Sleep(100);
 					Interface.Ping();
-				}
-				
-			} catch {
+				}	
+			} 
+            catch 
+            {
 				AppDomain.Unload(hookManagerDomain);
 				AppDomain.Unload(currentDomain);
 			}

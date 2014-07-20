@@ -9,8 +9,9 @@
 using System;
 using System.Windows.Forms;
 using System.IO;
+using Utility;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	
 	/// <summary>
@@ -18,7 +19,6 @@ namespace Injector
 	/// </summary>
 	public partial class MainForm : Form
 	{
-		
 		public MainForm()
 		{
 		    try
@@ -40,10 +40,9 @@ namespace Injector
         {
 		    try
 		    {
-                if (this.InvokeRequired)
+                if (InvokeRequired)
                 {
-                    this.Invoke(new Action(() => Log(str)));
-
+                    Invoke(new Action(() => Log(str)));
                 }
                 else
                 {
@@ -74,21 +73,10 @@ namespace Injector
                     logbox.Items.Clear();
                 }
 
-                using (StreamWriter w = File.AppendText(Cache.Instance.AssemblyPath + "\\Injector.log"))
-                {
-                    try
-                    {
-                        w.WriteLine(msg);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("[Log w.writeline] Exception [" + ex + "]");
-                    }
-                    
-                }
-
                 logbox.Items.Add(msg);
                 logbox.SelectedIndex = logbox.Items.Count - 1;
+
+                Logging.Log("QuestorSessionManager",msg, Logging.White);
 		    }
             catch (Exception ex)
             {
@@ -107,9 +95,9 @@ namespace Injector
 
                 if (Cache.Instance.EveSettings != null)
                 {
-                    if(Cache.Instance.EveSettings.EveDirectory != null && !string.IsNullOrEmpty(Cache.Instance.EveSettings.EveDirectory))
+                    if(Cache.Instance.EveSettings.EXEFileLocation != null && !string.IsNullOrEmpty(Cache.Instance.EveSettings.EXEFileLocation))
 		            {
-                        textBoxEveLocation.Text = Cache.Instance.EveSettings.EveDirectory;    
+                        textBoxEveLocation.Text = Cache.Instance.EveSettings.EXEFileLocation;    
 		            }
 
                     if (Cache.Instance.EveSettings.EveServerStatusThread != null)
@@ -126,7 +114,7 @@ namespace Injector
                     }
                 }
                 
-                WCFServer.Instance.StartWCFServer();
+                //WCFServer.Instance.StartWCFServer();
 		    }
             catch (Exception ex)
             {
@@ -153,7 +141,7 @@ namespace Injector
 		    {
 		        if (Cache.Instance.EveSettings != null)
 		        {
-                    Cache.Instance.EveSettings.EveDirectory = textBoxEveLocation.Text;    
+                    Cache.Instance.EveSettings.EXEFileLocation = textBoxEveLocation.Text;    
 		        }
 		    }
 		}
@@ -187,6 +175,7 @@ namespace Injector
                 if (dgv == null) return;
                 int index = (dgv.SelectedCells[0].OwningRow.Index);
                 EveAccount eA = Cache.Instance.EveAccountSerializeableSortableBindingList.List[index];
+                Logging.Log("MainForm", "StartInjectToolStripMenuItemClick", Logging.White);
                 eA.StartEveInject();
                 return;
 		    }

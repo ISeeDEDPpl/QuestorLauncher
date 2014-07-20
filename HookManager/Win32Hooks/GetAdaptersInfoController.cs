@@ -6,16 +6,13 @@
  * 
  * ---------------------------------------
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using EasyHook;
-using System.Drawing;
 
-namespace Win32Hooks
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of GetAdaptersInfoController.
@@ -39,35 +36,36 @@ namespace Win32Hooks
 		private string _address;
 		public GetAdaptersInfoController(IntPtr address, string guid, string mac, string ipaddress)
 		{
-			this.Name = typeof(GetAdaptersInfoController).Name;
+			Name = typeof(GetAdaptersInfoController).Name;
 			_guid = guid;
 			_mac = mac;
 			_address = ipaddress;
 			
-			try {
+			try 
+            {
 				_name = string.Format("GetAdaptersInfoHook_{0:X}", address.ToInt32());
 				_hook = LocalHook.Create(address, new GetAdaptersInfoDelegate(GetAdaptersInfoDetour), this);
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
-			} catch (Exception) {
-				
-				this.Error = true;
 			}
-			
+            catch (Exception)
+            {	
+				Error = true;
+			}
 		}
 
 		private int GetAdaptersInfoDetour(IntPtr AdaptersInfo, IntPtr OutputBuffLen)
 		{
-			var result = GetAdaptersInfo(AdaptersInfo, OutputBuffLen);
+			int result = GetAdaptersInfo(AdaptersInfo, OutputBuffLen);
 			if (AdaptersInfo != IntPtr.Zero)
 			{
-				var structureBefore = (IP_ADAPTER_INFO)Marshal.PtrToStructure(AdaptersInfo, typeof(IP_ADAPTER_INFO));
+				IP_ADAPTER_INFO structureBefore = (IP_ADAPTER_INFO)Marshal.PtrToStructure(AdaptersInfo, typeof(IP_ADAPTER_INFO));
 				string macBefore = BitConverter.ToString(structureBefore.Address);
 				
-				HookManager.Log("[GetAdaptersInfoDetour] Before: IP: " + structureBefore.IpAddressList.IpAddress.Address.ToString() + " GUID: " + structureBefore.AdapterName + " MAC: " + macBefore, Color.Orange);
+				global::HookManager.Win32Hooks.HookManager.Log("[GetAdaptersInfoDetour] Before: IP: " + structureBefore.IpAddressList.IpAddress.Address.ToString() + " GUID: " + structureBefore.AdapterName + " MAC: " + macBefore, Color.Orange);
 				structureBefore.AdapterName = _guid.ToUpper();
 				for (int i = 0; i < structureBefore.Address.Length - 1; i = i + 2)
 				{
-					var tekst = structureBefore.Address[i].ToString("X2", System.Globalization.CultureInfo.InvariantCulture);
+					string tekst = structureBefore.Address[i].ToString("X2", System.Globalization.CultureInfo.InvariantCulture);
 					if (tekst == "00")
 						tekst = "0";
 
@@ -77,12 +75,11 @@ namespace Win32Hooks
 				
 				structureBefore.IpAddressList.IpAddress.Address = _address;
 				Marshal.StructureToPtr(structureBefore, AdaptersInfo, true);
-				var structureAfter = (IP_ADAPTER_INFO)Marshal.PtrToStructure(AdaptersInfo, typeof(IP_ADAPTER_INFO));
+				IP_ADAPTER_INFO structureAfter = (IP_ADAPTER_INFO)Marshal.PtrToStructure(AdaptersInfo, typeof(IP_ADAPTER_INFO));
 				string macAfter = BitConverter.ToString(structureAfter.Address);
 				
-				HookManager.Log("[GetAdaptersInfoDetour] After: IP: " + structureAfter.IpAddressList.IpAddress.Address.ToString() + " GUID: " + structureAfter.AdapterName + " MAC: " + macAfter, Color.Orange);
+				global::HookManager.Win32Hooks.HookManager.Log("[GetAdaptersInfoDetour] After: IP: " + structureAfter.IpAddressList.IpAddress.Address.ToString() + " GUID: " + structureAfter.AdapterName + " MAC: " + macAfter, Color.Orange);
 			}
-			
 			
 			return result;
 		}
@@ -134,7 +131,6 @@ namespace Win32Hooks
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
 			public string Address;
 		}
-
 
 		public void Dispose()
 		{

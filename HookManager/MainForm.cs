@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using EasyHook;
 using System.IO;
 using System.Runtime.InteropServices;
-
+using Utility;
 
 namespace HookManager
 {
@@ -34,9 +34,9 @@ namespace HookManager
                 Win32Hooks.HookManager.Instance.WaitForEVE();
                 Win32Hooks.HookManager.Instance.LaunchAppDomain(0);
 		    }
-		    catch (Exception)
+		    catch (Exception ex)
 		    {
-		        
+                Logging.Log("HookManager", "Exception [" + ex + "]", Logging.Debug);
 		    }
 		}
 		
@@ -141,7 +141,7 @@ namespace HookManager
 		private bool doOnceTimerAppDomainMemoryTick = true;
 		void TimerAppDomainMemoryTick(object sender, EventArgs e)
 		{
-			if(doOnceTimerAppDomainMemoryTick) 
+			if (doOnceTimerAppDomainMemoryTick) 
             {
 				uint min = 104857600;
 				uint max = 838860800;
@@ -151,7 +151,7 @@ namespace HookManager
 				
 			}
 			
-			if(Win32Hooks.HookManager.Instance.QAppDomain != null) 
+			if (Win32Hooks.HookManager.Instance.QAppDomain != null) 
             {
 				
 				labelTotalAllocated.Text = Math.Round(Win32Hooks.HookManager.Instance.QAppDomain.MonitoringTotalAllocatedMemorySize/1048576D,2).ToString() + " mb";

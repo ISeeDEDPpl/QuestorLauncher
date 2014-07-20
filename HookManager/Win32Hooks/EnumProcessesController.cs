@@ -6,17 +6,14 @@
 * 
 * ---------------------------------------
 */
+
 using System;
-using EasyHook;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Linq;
 using System.Collections.Generic;
-using HookManager;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using EasyHook;
 
-
-namespace Win32Hooks
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IsDebuggerPresent.
@@ -39,34 +36,38 @@ namespace Win32Hooks
 		List<int> ExePidsBefore = new List<int>();
 		public EnumProcessesController()
 		{
-			this.Error = false;
-			this.Name = typeof(EnumProcessesController).Name;
-			try {
+			Error = false;
+			Name = typeof(EnumProcessesController).Name;
+			try 
+            {
 				currentEvePID = Process.GetCurrentProcess().Id;
-				this._hook = LocalHook.Create(
+				_hook = LocalHook.Create(
 					LocalHook.GetProcAddress("kernel32.dll", "K32EnumProcesses"),
-					new Win32Hooks.EnumProcessesController.EnumProcessesDelegate(EnumProcessesDetour),
+					new global::HookManager.Win32Hooks.EnumProcessesController.EnumProcessesDelegate(EnumProcessesDetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				this.Error = false;
-			} catch (Exception) {
-				this.Error = true;
-				
+				Error = false;
+			}
+            catch (Exception)
+            {
+				Error = true;
 			}
 		}
 		
 		private bool EnumProcessesDetour([In] [Out] IntPtr processIds, uint arrayBytesSize, [In] [Out] IntPtr bytesCopied)
 		{
-			
-			HookManager.Log("---------EnumProcessesDetourStart------");
+			global::HookManager.Win32Hooks.HookManager.Log("---------EnumProcessesDetourStart------");
 			bool success = EnumProcesses(processIds,arrayBytesSize,bytesCopied);
 			List<int> exeFilePids = new List<int>();
 			
-			foreach(string exeName in HookManager.ExeNamesToHide){
+			foreach(string exeName in global::HookManager.Win32Hooks.HookManager.ExeNamesToHide)
+            {
 				Process [] exeFiles = Process.GetProcessesByName(exeName);
-				foreach(Process exeFile in exeFiles){
-					if(exeFile.Id != currentEvePID){
+				foreach(Process exeFile in exeFiles)
+                {
+					if(exeFile.Id != currentEvePID)
+                    {
 						exeFilePids.Add(exeFile.Id);
 					}
 				}
@@ -79,33 +80,29 @@ namespace Win32Hooks
 			uint i=0;
 			while(i<pIDsCopied){
 				uint currentPID = (uint)Marshal.ReadIntPtr(processIds,(int)i*sizeof(uint));
-				if(exeFilePids.Contains((int)currentPID)){
+				if(exeFilePids.Contains((int)currentPID))
+                {
 					pidsDeleted++;
-					Marshal.WriteIntPtr(processIds,sizeof(uint) * (int)i,(IntPtr)0);
+					Marshal.WriteIntPtr(processIds,sizeof(uint) * (int)i,(IntPtr)0);	
 					
-					
-					for(uint b=i;b<(pIDsCopied-1);b++){
+					for(uint b=i;b<(pIDsCopied-1);b++)
+                    {
 						uint nextPID = (uint)Marshal.ReadIntPtr(processIds,(int)(b+1)*sizeof(uint));
 						Marshal.WriteIntPtr(processIds,sizeof(uint) * (int)b,(IntPtr)nextPID);
 					}
+
 					continue;
-					
 				} 
 				i++;
 			}
 			Marshal.WriteIntPtr(bytesCopied,0,(IntPtr)((pIDsCopied-pidsDeleted)*sizeof(uint)));
-			HookManager.Log("---------EnumProcessesDetourEnd------");
-			return success;
-			
-			
+			global::HookManager.Win32Hooks.HookManager.Log("---------EnumProcessesDetourEnd------");
+			return success;			
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			_hook.Dispose();
 		}
-		
-		
-		
 	}
 }

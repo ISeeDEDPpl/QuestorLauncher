@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Text;
 using EasyHook;
-using System.IO;
 
-namespace Win32Hooks
+namespace HookManager.Win32Hooks
 {
 	public class WinSockConnectController : IDisposable, IHook
 	{
@@ -26,24 +24,23 @@ namespace Win32Hooks
 
 		public WinSockConnectController(IntPtr address, string ip, string port , string user, string pass)
 		{
-			this.Name = typeof(WinSockConnectController).Name;
+			Name = typeof(WinSockConnectController).Name;
 			
 			this.ip = ip;
 			this.port = port;
 			this.user = user;
 			this.pass = pass;
 
-			try {
-				
+			try 
+            {	
 				_name = string.Format("WinsockHook_{0:X}", address.ToInt32());
 				_hook = LocalHook.Create(address, new WinsockConnectDelegate(WinsockConnectDetour), this);
-				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				
-			} catch (Exception) {
-				
-				this.Error = true;
+				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });	
+			} 
+            catch (Exception) 
+            {	
+				Error = true;
 			}
-
 		}
 
 		private object winsockLock = new object();
@@ -79,12 +76,12 @@ namespace Win32Hooks
 					byte[] recvBytes = new byte[2] { Marshal.ReadByte(response), Marshal.ReadByte(response, 1) };
 					if (recvBytes[1] == 255)
 					{
-						HookManager.Log("No authentication method was accepted by the proxy server");
+						global::HookManager.Win32Hooks.HookManager.Log("No authentication method was accepted by the proxy server");
 						return -1;
 					}
 					if (recvBytes[0] != 5)
 					{
-						HookManager.Log("No SOCKS5 proxy");
+						global::HookManager.Win32Hooks.HookManager.Log("No SOCKS5 proxy");
 						return -1;
 					}
 
@@ -103,7 +100,7 @@ namespace Win32Hooks
 						recvBytes = new byte[2] { Marshal.ReadByte(response), Marshal.ReadByte(response, 1) };
 						if (recvBytes[1] != 0)
 						{
-							HookManager.Log("Proxy: incorrect username/password");
+							global::HookManager.Win32Hooks.HookManager.Log("Proxy: incorrect username/password");
 							return -1;
 						}
 					}
@@ -141,11 +138,11 @@ namespace Win32Hooks
 
 		private int Connect(IntPtr socket, IntPtr addr, int addrsize)
 		{
-			var result = connect(socket, addr, addrsize);
+			int result = connect(socket, addr, addrsize);
 			while (result == -1)
 			{
-				var errorcode = WSAGetLastError();
-				HookManager.Log("Error: " + errorcode);
+				int errorcode = WSAGetLastError();
+				global::HookManager.Win32Hooks.HookManager.Log("Error: " + errorcode);
 				if (errorcode == 10056)
 					break;
 
@@ -163,11 +160,11 @@ namespace Win32Hooks
 
 		private int Send(IntPtr socket, IntPtr buf, int len)
 		{
-			var result = send(socket, buf, len, 0);
+			int result = send(socket, buf, len, 0);
 			while (result == -1)
 			{
 				var errorcode = WSAGetLastError();
-				HookManager.Log("Error: " + errorcode);
+				global::HookManager.Win32Hooks.HookManager.Log("Error: " + errorcode);
 				if (errorcode == 10056)
 					break;
 
@@ -179,19 +176,20 @@ namespace Win32Hooks
 
 				result = send(socket, buf, 4, 0);
 			}
+
 			return result;
 		}
 
 		private List<IntPtr> allocatedMemory = new List<IntPtr>();
 		private IntPtr Recieve(IntPtr socket, int len)
 		{
-			var buffer = Marshal.AllocHGlobal(len);
+			IntPtr buffer = Marshal.AllocHGlobal(len);
 			allocatedMemory.Add(buffer);
 
 			var result = recv(socket, buffer, len, 0);
 			if (result == -1)
 			{
-				HookManager.Log("Error2: " + WSAGetLastError());
+				global::HookManager.Win32Hooks.HookManager.Log("Error2: " + WSAGetLastError());
 				return IntPtr.Zero;
 			}
 
@@ -200,14 +198,14 @@ namespace Win32Hooks
 
 		private IntPtr RecieveAuth(IntPtr socket, int len)
 		{
-			var buffer = Marshal.AllocHGlobal(len);
+			IntPtr buffer = Marshal.AllocHGlobal(len);
 			allocatedMemory.Add(buffer);
 
-			var result = recv(socket, buffer, len, 0);
+			int result = recv(socket, buffer, len, 0);
 			if (result == -1)
 			{
-				HookManager.Log("Error3: " + WSAGetLastError());
-				return IntPtr.Zero; ;
+				global::HookManager.Win32Hooks.HookManager.Log("Error3: " + WSAGetLastError());
+				return IntPtr.Zero;
 			}
 
 			if (result == 0)
@@ -215,22 +213,23 @@ namespace Win32Hooks
 
 			if (result != 2)
 			{
-				HookManager.Log("Proxy: Bad response from server");
+				global::HookManager.Win32Hooks.HookManager.Log("Proxy: Bad response from server");
 				return IntPtr.Zero;
 			}
+
 			return buffer;
 		}
 
 		private IntPtr RecieveBind(IntPtr socket, int len)
 		{
-			var buffer = Marshal.AllocHGlobal(len);
+			IntPtr buffer = Marshal.AllocHGlobal(len);
 			allocatedMemory.Add(buffer);
 
-			var result = recv(socket, buffer, len, 0);
+			int result = recv(socket, buffer, len, 0);
 			if (result == -1)
 			{
-				HookManager.Log("Error3: " + WSAGetLastError());
-				return IntPtr.Zero; ;
+				global::HookManager.Win32Hooks.HookManager.Log("Error3: " + WSAGetLastError());
+				return IntPtr.Zero;
 			}
 
 			if (result == 0)
@@ -238,9 +237,10 @@ namespace Win32Hooks
 
 			if (result != 10)
 			{
-				HookManager.Log("Proxy: Bad response from server");
+				global::HookManager.Win32Hooks.HookManager.Log("Proxy: Bad response from server");
 				return IntPtr.Zero;
 			}
+
 			return buffer;
 		}
 
@@ -258,7 +258,7 @@ namespace Win32Hooks
 
 		private IntPtr SetUpSocks5Request()
 		{
-			var initialRequest = Marshal.AllocHGlobal(4);
+			IntPtr initialRequest = Marshal.AllocHGlobal(4);
 
 			Marshal.WriteByte(initialRequest, Convert.ToByte(5));
 			Marshal.WriteByte(initialRequest + 1, Convert.ToByte(2));
@@ -271,8 +271,8 @@ namespace Win32Hooks
 		private IntPtr SetUpAuthenticateRequest(string username, string password, out int index)
 		{
 			index = 0;
-			var size = 3 + Encoding.Default.GetBytes(username).Length + Encoding.Default.GetBytes(password).Length;
-			var authenticateBuffer = Marshal.AllocHGlobal(size);
+			int size = 3 + Encoding.Default.GetBytes(username).Length + Encoding.Default.GetBytes(password).Length;
+			IntPtr authenticateBuffer = Marshal.AllocHGlobal(size);
 
 			Marshal.WriteByte(authenticateBuffer + index++, Convert.ToByte(1));
 			Marshal.WriteByte(authenticateBuffer + index++, Convert.ToByte(username.Length));     //USERNAME
@@ -300,8 +300,8 @@ namespace Win32Hooks
 
 		private IntPtr SetUpBindWithEve(string eveIP, ushort evePort)
 		{
-			var bindWithEveBuffer = Marshal.AllocHGlobal(10);
-			var iplist = eveIP.Split('.').ToList();
+			IntPtr bindWithEveBuffer = Marshal.AllocHGlobal(10);
+			List<string> iplist = eveIP.Split('.').ToList();
 			byte[] portbyte = BitConverter.GetBytes(evePort).Reverse().ToArray();
 			byte[] newbyte = new byte[2];
 			int indexy = 0;
@@ -328,30 +328,31 @@ namespace Win32Hooks
 
 		private bool VerifyBindResponse(IntPtr buffer)
 		{
-			var recvBytes = new byte[10] { Marshal.ReadByte(buffer), Marshal.ReadByte(buffer, 1), Marshal.ReadByte(buffer, 2), Marshal.ReadByte(buffer, 3), Marshal.ReadByte(buffer, 4), Marshal.ReadByte(buffer, 5), Marshal.ReadByte(buffer, 6), Marshal.ReadByte(buffer, 7), Marshal.ReadByte(buffer, 8), Marshal.ReadByte(buffer, 9) };
+			byte[] recvBytes = new byte[10] { Marshal.ReadByte(buffer), Marshal.ReadByte(buffer, 1), Marshal.ReadByte(buffer, 2), Marshal.ReadByte(buffer, 3), Marshal.ReadByte(buffer, 4), Marshal.ReadByte(buffer, 5), Marshal.ReadByte(buffer, 6), Marshal.ReadByte(buffer, 7), Marshal.ReadByte(buffer, 8), Marshal.ReadByte(buffer, 9) };
 
 			if (recvBytes[1] != 0)
 			{
 				if (recvBytes[1] == 1)
-					HookManager.Log("General failure");
+					global::HookManager.Win32Hooks.HookManager.Log("General failure");
 				if (recvBytes[1] == 2)
-					HookManager.Log("connection not allowed by ruleset");
+					global::HookManager.Win32Hooks.HookManager.Log("connection not allowed by ruleset");
 				if (recvBytes[1] == 3)
-					HookManager.Log("network unreachable");
+					global::HookManager.Win32Hooks.HookManager.Log("network unreachable");
 				if (recvBytes[1] == 4)
-					HookManager.Log("host unreachable");
+					global::HookManager.Win32Hooks.HookManager.Log("host unreachable");
 				if (recvBytes[1] == 5)
-					HookManager.Log("connection refused by destination host");
+					global::HookManager.Win32Hooks.HookManager.Log("connection refused by destination host");
 				if (recvBytes[1] == 6)
-					HookManager.Log("TTL expired");
+					global::HookManager.Win32Hooks.HookManager.Log("TTL expired");
 				if (recvBytes[1] == 7)
-					HookManager.Log("command not supported / protocol error");
+					global::HookManager.Win32Hooks.HookManager.Log("command not supported / protocol error");
 				if (recvBytes[1] == 8)
-					HookManager.Log("address type not supported");
+					global::HookManager.Win32Hooks.HookManager.Log("address type not supported");
 
-				HookManager.Log("Proxy: Connection error binding eve server");
+				global::HookManager.Win32Hooks.HookManager.Log("Proxy: Connection error binding eve server");
 				return false;
 			}
+
 			return true;
 		}
 

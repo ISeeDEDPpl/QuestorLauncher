@@ -7,14 +7,13 @@
 * ---------------------------------------
 */
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.IO;
 using System.Threading;
 using Utility;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of Cache.
@@ -58,7 +57,7 @@ namespace Injector
             {
                 try
                 {
-                    _defaultEveSettings = new EveSetting("C:\\eveoffline\\bin\\exefile.exe", "C:\\redguard\\", DateTime.MinValue, true);
+                    _defaultEveSettings = new EveSetting("C:\\eve\\bin\\exefile.exe", "C:\\eveoffline\\rg\\", DateTime.MinValue, true);
 
                     if (eveSettingsSerializeableSortableBindingList == null)
                     {
@@ -80,12 +79,12 @@ namespace Injector
                         return (EveSetting)eveSettingsSerializeableSortableBindingList.List[0];
                     }
 
-                    Log("[EveSettings] EveSettings is null");
+                    Logging.Log("EveSettings","EveSettings is null", Logging.White);
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    Log("[EveSettings] Exception [" + ex + "]");
+                    Logging.Log("EveSettings", "Exception [" + ex + "]", Logging.White);
                     return null;
                 }
 			}
@@ -103,27 +102,6 @@ namespace Injector
 
 				return _assemblyPath;
 			}
-		}
-		
-		public string EveLocation 
-        {
-			get 
-            {
-                try
-                {
-                    if (Cache.Instance.EveSettings != null)
-                    {
-                        return Cache.Instance.EveSettings.EveDirectory;
-                    }
-
-                    return null;
-                }
-                catch (Exception ex)
-                {
-                    Log("[EveLocation] Exception [" + ex + "]");
-                    return null;
-                }
-            }
 		}
 		
 		public void Log(string text)
@@ -151,6 +129,5 @@ namespace Injector
 		{
 			Interlocked.Decrement(ref CacheInstances);
 		}
-		
 	}
 }

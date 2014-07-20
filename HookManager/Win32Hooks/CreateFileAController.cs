@@ -6,14 +6,13 @@
  * 
  * ---------------------------------------
  */
-using System;
-using EasyHook;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
-using HookManager;
-using System.IO;
 
-namespace Win32Hooks
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using EasyHook;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IsDebuggerPresent.
@@ -49,20 +48,22 @@ namespace Win32Hooks
 		
 		public CreateFileAController()
 		{
-			this.Error = false;
-			this.Name = typeof(CreateFileAController).Name;
+			Error = false;
+			Name = typeof(CreateFileAController).Name;
 			
-			try {
-				this._hook = LocalHook.Create(
+			try 
+            {
+				_hook = LocalHook.Create(
 					LocalHook.GetProcAddress("kernel32.dll", "CreateFileA"),
-					new Win32Hooks.CreateFileAController.CreateFileADelegate(CreateFileADetour),
+					new global::HookManager.Win32Hooks.CreateFileAController.CreateFileADelegate(CreateFileADetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
-				this.Error = false;
-			} catch (Exception) {
-				this.Error = true;
-				
+				Error = false;
+			}
+            catch (Exception)
+            {
+				Error = true;	
 			}
 		}
 		static IntPtr CreateFileADetour(
@@ -76,35 +77,35 @@ namespace Win32Hooks
 		{
 			
 			string fileName = String.Empty, pathName = String.Empty;
-			try {
-				
+			try 
+            {	
 				fileName  = Path.GetFileName(InFileName);
-				pathName = Path.GetDirectoryName(InFileName);
-				
-				
-			} catch (Exception e) {
-				
-				HookManager.Log("CreateFileADetour - Exception:  " + e.ToString());
+				pathName = Path.GetDirectoryName(InFileName);	
+			}
+            catch (Exception e)
+            {	
+				global::HookManager.Win32Hooks.HookManager.Log("CreateFileADetour - Exception:  " + e.ToString());
 			}
 			
-
-			
-			if(HookManager.IsBacklistedDirectory(pathName)){
-				HookManager.Log("[-----BLACKLISTED-----] CreateFileADetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
+			if (global::HookManager.Win32Hooks.HookManager.IsBacklistedDirectory(pathName))
+            {
+				global::HookManager.Win32Hooks.HookManager.Log("[-----BLACKLISTED-----] CreateFileADetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
 			}
 			
-			if((IsRead(InDesiredAccess) && HookManager.IsWhiteListedReadDirectory(pathName))){
-				
-			} else {
-				
-				if(IsWrite(InDesiredAccess) && HookManager.IsWhiteListedWriteDirectory(pathName)) {
+			if ((IsRead(InDesiredAccess) && global::HookManager.Win32Hooks.HookManager.IsWhiteListedReadDirectory(pathName)))
+            {	
+			} 
+            else 
+            {	
+				if(IsWrite(InDesiredAccess) && global::HookManager.Win32Hooks.HookManager.IsWhiteListedWriteDirectory(pathName)) 
+                {
 					//	HookManager.Log("[Whitelisted] CreateFileADetour-lpFileName(WRITE): " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
 				}
-				
-				else {
-					
-					if(InDesiredAccess != 0){
-						HookManager.Log("[not Whitelisted] CreateFileADetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
+				else 
+                {	
+					if(InDesiredAccess != 0)
+                    {
+						global::HookManager.Win32Hooks.HookManager.Log("[not Whitelisted] CreateFileADetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
 						//return new IntPtr(-1);
 					}
 				}
@@ -119,19 +120,18 @@ namespace Win32Hooks
 		// fILE_ATTRIBUTE_TEMPORARY      =  256
 		// sTANDARD_RIGHTS_READ      =  131072
 		
-		public static bool IsRead(UInt32 InDesiredAccess) {
+		public static bool IsRead(UInt32 InDesiredAccess) 
+        {
 			return (InDesiredAccess == 2147483648 || InDesiredAccess == 131072 || InDesiredAccess == 256) ? true : false;
 		}
-		public static bool IsWrite(UInt32 InDesiredAccess) {
+		public static bool IsWrite(UInt32 InDesiredAccess) 
+        {
 			return (InDesiredAccess == 1073741824 || InDesiredAccess == 3221225472) ? true : false;
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			_hook.Dispose();
 		}
-		
-		
-		
 	}
 }

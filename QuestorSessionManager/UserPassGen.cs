@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Injector
+namespace QuestorSessionManager
 {
 	/// <summary>
 	/// Description of UserPassGen.

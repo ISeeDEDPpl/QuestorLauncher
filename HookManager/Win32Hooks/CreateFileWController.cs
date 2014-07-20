@@ -6,14 +6,13 @@
  * 
  * ---------------------------------------
  */
-using System;
-using EasyHook;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
-using HookManager;
-using System.IO;
 
-namespace Win32Hooks
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using EasyHook;
+
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IsDebuggerPresent.
@@ -56,7 +55,7 @@ namespace Win32Hooks
 			try {
 				this._hook = LocalHook.Create(
 					LocalHook.GetProcAddress("kernel32.dll", "CreateFileW"),
-					new Win32Hooks.CreateFileWController.CreateFileWDelegate(CreateFileWDetour),
+					new global::HookManager.Win32Hooks.CreateFileWController.CreateFileWDelegate(CreateFileWDetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
@@ -87,17 +86,17 @@ namespace Win32Hooks
 				
 			} catch (Exception e) {
 				
-				HookManager.Log("CreateFileWDetour - Exception:  " + e.ToString());
+				global::HookManager.Win32Hooks.HookManager.Log("CreateFileWDetour - Exception:  " + e.ToString());
 			}
 			
 
 			
-			if(HookManager.IsBacklistedDirectory(pathName)){
-				HookManager.Log("[-----BLACKLISTED-----] CreateFileWDetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
+			if(global::HookManager.Win32Hooks.HookManager.IsBacklistedDirectory(pathName)){
+				global::HookManager.Win32Hooks.HookManager.Log("[-----BLACKLISTED-----] CreateFileWDetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
 				//return new IntPtr(-1);
 			}
 			
-			if((IsRead(InDesiredAccess) && HookManager.IsWhiteListedReadDirectory(pathName))){
+			if((IsRead(InDesiredAccess) && global::HookManager.Win32Hooks.HookManager.IsWhiteListedReadDirectory(pathName))){
 				
 				
 				//	HookManager.Log("[Whitelisted] CreateFileWDetour-lpFileName(READ): " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
@@ -105,14 +104,14 @@ namespace Win32Hooks
 				
 			} else {
 				
-				if(IsWrite(InDesiredAccess) && HookManager.IsWhiteListedWriteDirectory(pathName)) {
+				if(IsWrite(InDesiredAccess) && global::HookManager.Win32Hooks.HookManager.IsWhiteListedWriteDirectory(pathName)) {
 					//	HookManager.Log("[Whitelisted] CreateFileWDetour-lpFileName(WRITE): " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
 				}
 				
 				else {
 					
 					if(InDesiredAccess != 0){
-						HookManager.Log("[not Whitelisted] CreateFileWDetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
+						global::HookManager.Win32Hooks.HookManager.Log("[not Whitelisted] CreateFileWDetour-lpFileName: " + pathName + "\\" + fileName + " Desired Access: " + InDesiredAccess.ToString());
 						//return new IntPtr(-1);
 					}
 					

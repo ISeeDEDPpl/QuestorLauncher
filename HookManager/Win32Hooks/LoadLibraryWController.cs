@@ -6,18 +6,12 @@
  * 
  * ---------------------------------------
  */
+
 using System;
-using EasyHook;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Linq;
-using System.IO;
-using System.Reflection;
-using System.Collections.Generic;
-using HookManager;
+using EasyHook;
 
-
-namespace Win32Hooks
+namespace HookManager.Win32Hooks
 {
 	/// <summary>
 	/// Description of IsDebuggerPresent.
@@ -38,50 +32,54 @@ namespace Win32Hooks
 		
 		public LoadLibraryWController()
 		{
-			this.Error = false;
-			this.Name = typeof(LoadLibraryWController).Name;
+			Error = false;
+			Name = typeof(LoadLibraryWController).Name;
 			
-			try {
-				this._hook = LocalHook.Create(
+			try 
+            {
+			    _hook = LocalHook.Create(
 					LocalHook.GetProcAddress("Kernel32.dll", "LoadLibraryW"),
-					new Win32Hooks.LoadLibraryWController.LoadLibraryWDelegate(LoadLibraryWDetour),
+					new global::HookManager.Win32Hooks.LoadLibraryWController.LoadLibraryWDelegate(LoadLibraryWDetour),
 					this);
 				
 				_hook.ThreadACL.SetExclusiveACL(new Int32[] { 1 });
 				this.Error = false;
-			} catch (Exception) {
-				this.Error = true;
-				
+			} 
+            catch (Exception) 
+            {
+				Error = true;	
 			}
 		}
 		
 		private IntPtr LoadLibraryWDetour(IntPtr lpModuleName)
 		{
 			
-			try {
+			try 
+            {
 				string lpModName = Marshal.PtrToStringUni(lpModuleName);
-				if (lpModName != null && lpModName != ""){
-					if(HookManager.NeedsToBeCloaked(lpModName)) {
-						HookManager.Log("[LoadLibraryWDetour] Found & cloaked: " + lpModName);
+				if (!string.IsNullOrEmpty(lpModName))
+                {
+					if(global::HookManager.Win32Hooks.HookManager.NeedsToBeCloaked(lpModName)) 
+                    {
+						global::HookManager.Win32Hooks.HookManager.Log("[LoadLibraryWDetour] Found & cloaked: " + lpModName);
 						return IntPtr.Zero;
-					} else {
-						if(!HookManager.IsWhiteListedFileName(lpModName)) HookManager.Log("[LoadLibraryWDetour] File wasn't found in Directory - not claoking: " + lpModName);
-						return LoadLibraryW(lpModuleName);
-					}
+					} 
+                    
+					if(!global::HookManager.Win32Hooks.HookManager.IsWhiteListedFileName(lpModName)) global::HookManager.Win32Hooks.HookManager.Log("[LoadLibraryWDetour] File wasn't found in Directory - not claoking: " + lpModName);
+					return LoadLibraryW(lpModuleName);
 				}
-				return LoadLibraryW(lpModuleName);
-				
-			} catch (Exception) {
+
+				return LoadLibraryW(lpModuleName);	
+			} 
+            catch (Exception) 
+            {
 				return IntPtr.Zero;
 			}
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {	
 			_hook.Dispose();
 		}
-		
-		
-		
 	}
 }
